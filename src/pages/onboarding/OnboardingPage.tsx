@@ -1,7 +1,8 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router";
 
-import { checkNickname, loginWithNickname } from "@/features/auth/api/authApi";
+import { checkNickname } from "@/features/auth/api/authApi";
+import { useLoginMutation } from "@/features/auth/queries/useLoginMutation";
 import { useAuthStore } from "@/features/auth/stores/authStore";
 import Button from "@/shared/ui/Button";
 import Card from "@/shared/ui/Card";
@@ -10,20 +11,22 @@ import Input from "@/shared/ui/Input";
 export default function OnboardingPage() {
   const navigate = useNavigate();
   const login = useAuthStore((state) => state.login);
+  const loginMutation = useLoginMutation();
   const [nickname, setNickname] = useState("");
   const [message, setMessage] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setIsSubmitting(true);
     const nextNickname = nickname.trim();
-    const { available } = await checkNickname(nextNickname);
-    const user = await loginWithNickname(nextNickname);
-    login(user);
-    setMessage(available ? "새 닉네임으로 시작합니다." : "기존 닉네임으로 로그인합니다.");
-    setIsSubmitting(false);
-    navigate("/home", { replace: true });
+    try {
+      const { available } = await checkNickname(nextNickname);
+      const user = await loginMutation.mutateAsync(nextNickname);
+      login(user);
+      setMessage(available ? "로그인되었습니다." : "닉네임을 확인해주세요.");
+      navigate("/home", { replace: true });
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "로그인에 실패했습니다.");
+    }
   }
 
   return (
@@ -44,7 +47,7 @@ export default function OnboardingPage() {
             minLength={2}
             required
           />
-          <Button className="w-full" disabled={isSubmitting}>
+          <Button className="w-full" disabled={loginMutation.isPending}>
             시작하기
           </Button>
         </form>
