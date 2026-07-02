@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 
 import { useLoginMutation } from "@/features/auth/queries/useLoginMutation";
 import { useAuthStore } from "@/features/auth/stores/authStore";
+import { ApiError } from "@/shared/api/ApiError";
 import Button from "@/shared/ui/Button";
 import Input from "@/shared/ui/Input";
 
@@ -55,6 +56,11 @@ export default function OnboardingPage() {
       login(user);
       navigate("/home", { replace: true });
     } catch (error) {
+      if (error instanceof ApiError && error.status === 409) {
+        setMessage("이미 다른 채집가가 사용 중인 이름이에요.");
+        return;
+      }
+
       setMessage(error instanceof Error ? error.message : "로그인에 실패했습니다.");
     }
   }
@@ -93,7 +99,7 @@ export default function OnboardingPage() {
               required
             />
             <p className="mt-3 text-xs text-gray-600">{nickname.trim().length}/15</p>
-            {message ? <p className="mt-4 text-sm text-danger">{message}</p> : null}
+            {message ? <p className="mt-4 text-body-12 text-danger">{message}</p> : null}
           </div>
           <div className="mt-auto pb-3">
             <Button fullWidth size="lg" disabled={loginMutation.isPending || nickname.trim().length < 1 || nickname.trim().length > 15}>
