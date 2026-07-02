@@ -4,10 +4,15 @@ import type {
   CollectionStatus,
 } from "@/features/collection/types/collection";
 import { getMission } from "@/features/mission/api/missionApi";
-import type { Trip } from "@/features/trip/types/trip";
 
 const COLLECTIONS_KEY = "mock-collections";
 const TRIPS_KEY = "mock-trips";
+
+type MockTrip = {
+  id: number;
+  userId: number;
+  region: string;
+};
 
 function readCollections(): Collection[] {
   const raw = localStorage.getItem(COLLECTIONS_KEY);
@@ -18,9 +23,9 @@ function writeCollections(collections: Collection[]) {
   localStorage.setItem(COLLECTIONS_KEY, JSON.stringify(collections));
 }
 
-function readTrips(): Trip[] {
+function readTrips(): MockTrip[] {
   const raw = localStorage.getItem(TRIPS_KEY);
-  return raw ? (JSON.parse(raw) as Trip[]) : [];
+  return raw ? (JSON.parse(raw) as MockTrip[]) : [];
 }
 
 export async function createCollection(payload: CollectionCreatePayload): Promise<Collection> {

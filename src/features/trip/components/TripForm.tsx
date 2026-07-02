@@ -1,28 +1,28 @@
 import { useState, type FormEvent } from "react";
 
-import type { CompanionType, TripCreatePayload } from "@/features/trip/types/trip";
+import type { CompanionType, TripCreatePayload, TripMood } from "@/features/trip/types/trip";
 import Button from "@/shared/ui/Button";
 import Card from "@/shared/ui/Card";
 import Input from "@/shared/ui/Input";
 
 type TripFormProps = {
-  userId: number;
   onSubmit: (payload: TripCreatePayload) => Promise<void>;
 };
 
-export default function TripForm({ userId, onSubmit }: TripFormProps) {
+export default function TripForm({ onSubmit }: TripFormProps) {
   const today = new Date().toISOString().slice(0, 10);
-  const [title, setTitle] = useState("");
+  const [tripName, setTripName] = useState("");
   const [region, setRegion] = useState("");
   const [startDate, setStartDate] = useState(today);
   const [endDate, setEndDate] = useState(today);
   const [companionType, setCompanionType] = useState<CompanionType>("ALONE");
+  const [mood, setMood] = useState<TripMood>("EMOTIONAL");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setIsSubmitting(true);
-    await onSubmit({ userId, title, region, startDate, endDate, companionType });
+    await onSubmit({ tripName, region, startDate, endDate, companionType, mood });
     setIsSubmitting(false);
   }
 
@@ -31,7 +31,7 @@ export default function TripForm({ userId, onSubmit }: TripFormProps) {
       <form className="space-y-4" onSubmit={handleSubmit}>
         <label className="block text-sm font-medium text-neutral-700">
           여행 이름
-          <Input className="mt-2" value={title} onChange={(event) => setTitle(event.target.value)} required />
+          <Input className="mt-2" value={tripName} onChange={(event) => setTripName(event.target.value)} required />
         </label>
         <label className="block text-sm font-medium text-neutral-700">
           지역
@@ -58,6 +58,19 @@ export default function TripForm({ userId, onSubmit }: TripFormProps) {
             <option value="FRIEND">친구</option>
             <option value="COUPLE">연인</option>
             <option value="ETC">기타</option>
+          </select>
+        </label>
+        <label className="block text-sm font-medium text-neutral-700">
+          여행 무드
+          <select
+            className="mt-2 min-h-11 w-full rounded-lg border border-neutral-200 bg-white px-3 text-sm"
+            value={mood}
+            onChange={(event) => setMood(event.target.value as TripMood)}
+          >
+            <option value="EMOTIONAL">감성</option>
+            <option value="WANDERING">탐험</option>
+            <option value="LOCAL">로컬</option>
+            <option value="COURAGE">도전</option>
           </select>
         </label>
         <Button className="w-full" disabled={isSubmitting}>

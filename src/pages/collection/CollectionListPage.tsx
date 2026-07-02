@@ -21,9 +21,9 @@ export default function CollectionListPage() {
       if (!userId) return;
       const activeTrip = await getActiveTrip(userId);
       const nextCollections = activeTrip
-        ? await getCollections({ tripId: activeTrip.id })
+        ? await getCollections({ tripId: activeTrip.tripId })
         : (await getCollections({})).filter((collection) => collection.userId === userId);
-      setTitle(activeTrip ? `${activeTrip.title} 채집통` : "채집 기록");
+      setTitle(activeTrip ? `${activeTrip.tripName} 채집통` : "채집 기록");
       setCollections(nextCollections);
     }
 
