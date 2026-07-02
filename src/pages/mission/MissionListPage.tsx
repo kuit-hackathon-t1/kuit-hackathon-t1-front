@@ -2,12 +2,12 @@ import { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router";
 
 import closeIcon from "@/assets/icons/close.svg";
-import okayIcon from "@/assets/icons/okay.svg";
 import shuffleIcon from "@/assets/icons/shuffle.svg";
-import warningIcon from "@/assets/icons/warning.svg";
 import { useAuthStore } from "@/features/auth/stores/authStore";
+import MissionActionDialog from "@/features/mission/components/MissionActionDialog";
 import MissionDrawFlow from "@/features/mission/components/MissionDrawFlow";
 import MissionTabs, { type MissionTab } from "@/features/mission/components/MissionTabs";
+import { getMissionCategoryMeta } from "@/features/mission/lib/missionCategory";
 import { useMissionListQuery } from "@/features/mission/queries/useMissionListQuery";
 import type { Mission, MissionStatus } from "@/features/mission/types/mission";
 import { useCurrentTripQuery } from "@/features/trip/queries/useCurrentTripQuery";
@@ -114,14 +114,19 @@ export default function MissionListPage() {
         </>
       )}
 
-      {selectedMission ? (
-        <MissionListDialog
+      {selectedMission?.status === "ACTIVE" ? (
+        <MissionActionDialog
           mission={selectedMission}
           selectedStatus={selectedStatus}
           onSelectStatus={setSelectedStatus}
           onClose={closeMissionDialog}
           onBack={() => setSelectedStatus(null)}
           onRecord={() => selectedStatus && moveToRecord(selectedStatus)}
+        />
+      ) : selectedMission ? (
+        <MissionListDialog
+          mission={selectedMission}
+          onClose={closeMissionDialog}
           onGoCollections={() => navigate("/collections")}
         />
       ) : null}
@@ -155,14 +160,15 @@ function MissionStackCard({
   onOpen: (mission: Mission) => void;
 }) {
   const interactive = mission.status === "ACTIVE" || mission.status === "SUCCESS" || mission.status === "FAILURE";
+  const categoryMeta = getMissionCategoryMeta(mission.category);
   const rotation = index % 2 === 0 ? "-rotate-[4deg]" : "rotate-[5deg]";
   const offset = index === 0 ? "" : "-mt-8";
 
   const content = (
     <Card className={`relative rounded-[22px] border-gray-200 bg-white p-5 shadow-card ${rotation}`}>
       <div className="flex items-start justify-between gap-3">
-        <span className="inline-flex rounded-full bg-gray-200 px-3 py-1 text-xs font-semibold text-gray-500">
-          {mission.isLocal ? "지역" : "즉흥"}
+        <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${categoryMeta.className}`}>
+          {categoryMeta.label}
         </span>
         <span className="rounded-full border border-gray-400 bg-white px-4 py-2 text-sm font-semibold text-gray-500">
           {mission.status === "ACTIVE"
@@ -192,28 +198,18 @@ function MissionStackCard({
 
 function MissionListDialog({
   mission,
-  selectedStatus,
-  onSelectStatus,
   onClose,
-  onBack,
-  onRecord,
   onGoCollections,
 }: {
   mission: Mission;
-  selectedStatus: "SUCCESS" | "FAILURE" | null;
-  onSelectStatus: (status: "SUCCESS" | "FAILURE") => void;
   onClose: () => void;
-  onBack: () => void;
-  onRecord: () => void;
   onGoCollections: () => void;
 }) {
-  const isCompleted = mission.status === "SUCCESS" || mission.status === "FAILURE";
-
   return (
-    <div className="fixed inset-x-0 bottom-0 z-[60] mx-auto flex w-full max-w-[430px] items-end justify-center bg-black/10 px-5 pb-24 pt-6">
-      <Card className="max-h-[72dvh] w-full max-w-[360px] overflow-y-auto rounded-[28px] border-gray-200 bg-white p-5 shadow-card">
+    <div className="fixed inset-0 z-[60] mx-auto flex w-full max-w-[430px] items-center justify-center bg-black/35 px-5 py-6">
+      <Card className="max-h-[calc(100dvh-48px)] w-full max-w-[390px] overflow-y-auto rounded-[28px] border-gray-200 bg-white p-5 shadow-card">
         <div className="flex items-center justify-between">
-          <p className="text-sm font-semibold text-primary">{isCompleted ? "채집한 미션" : "진행중인 미션"}</p>
+          <p className="text-sm font-semibold text-primary">채집한 미션</p>
           <button
             className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 text-2xl text-black-700"
             type="button"
@@ -223,33 +219,19 @@ function MissionListDialog({
             <img className="h-4 w-4" src={closeIcon} alt="" aria-hidden="true" />
           </button>
         </div>
-        {isCompleted ? (
-          <CompletedMissionNotice mission={mission} onGoCollections={onGoCollections} />
-        ) : !selectedStatus ? (
-          <>
-            <MissionDialogCard mission={mission} />
-            <div className="mt-5 grid grid-cols-2 gap-2">
-              <Button type="button" variant="grayOutline" onClick={() => onSelectStatus("FAILURE")}>
-                실패
-              </Button>
-              <Button type="button" onClick={() => onSelectStatus("SUCCESS")}>
-                성공
-              </Button>
-            </div>
-          </>
-        ) : (
-          <ResultConfirm status={selectedStatus} onBack={onBack} onClose={onClose} onRecord={onRecord} />
-        )}
+        <CompletedMissionNotice mission={mission} onGoCollections={onGoCollections} />
       </Card>
     </div>
   );
 }
 
 function MissionDialogCard({ mission }: { mission: Mission }) {
+  const categoryMeta = getMissionCategoryMeta(mission.category);
+
   return (
     <div className="mt-5 rounded-[22px] border border-gray-200 bg-[#FFFFF7] p-4">
-      <span className="inline-flex rounded-full bg-gray-200 px-3 py-1 text-xs font-semibold text-gray-600">
-        {mission.isLocal ? "지역" : "즉흥"}
+      <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${categoryMeta.className}`}>
+        {categoryMeta.label}
       </span>
       <h2 className="mt-3 text-lg font-bold leading-7 text-black-950">{mission.title}</h2>
       <p className="mt-3 text-sm leading-6 text-black-700">{mission.description}</p>
@@ -267,47 +249,6 @@ function CompletedMissionNotice({ mission, onGoCollections }: { mission: Mission
       <Button className="mt-5 w-full" type="button" onClick={onGoCollections}>
         채집 기록으로 이동
       </Button>
-    </div>
-  );
-}
-
-function ResultConfirm({
-  status,
-  onBack,
-  onClose,
-  onRecord,
-}: {
-  status: "SUCCESS" | "FAILURE";
-  onBack: () => void;
-  onClose: () => void;
-  onRecord: () => void;
-}) {
-  const isSuccess = status === "SUCCESS";
-
-  return (
-    <div className="mt-6 text-center">
-      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary-soft text-2xl text-primary">
-        <img className="h-6 w-6" src={isSuccess ? okayIcon : warningIcon} alt="" aria-hidden="true" />
-      </div>
-      <h2 className="mt-4 text-xl font-bold text-black-950">{isSuccess ? "고생했어요!" : "미션에 실패하셨나요?"}</h2>
-      <p className="mt-3 text-sm leading-6 text-black-700">
-        {isSuccess
-          ? "미션을 성공적으로 완료했어요. 성공의 순간을 사진으로 채집해 볼까요?"
-          : "미션에 실패해도 추억은 저장할 수 있어요. 실패한 추억을 채집해볼까요?"}
-      </p>
-      <div className="mt-6 grid gap-2">
-        <Button type="button" onClick={onRecord}>
-          사진 채집하기
-        </Button>
-        <div className="grid grid-cols-2 gap-2">
-          <Button type="button" variant="grayOutline" onClick={onBack}>
-            다시 선택
-          </Button>
-          <Button type="button" variant="grayOutline" onClick={onClose}>
-            나가기
-          </Button>
-        </div>
-      </div>
     </div>
   );
 }

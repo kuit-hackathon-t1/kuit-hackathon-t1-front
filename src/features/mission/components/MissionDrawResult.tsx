@@ -1,4 +1,5 @@
 import shuffleIcon from "@/assets/icons/shuffle.svg";
+import { getMissionCategoryMeta } from "@/features/mission/lib/missionCategory";
 import type { Mission } from "@/features/mission/types/mission";
 import Button from "@/shared/ui/Button";
 import Card from "@/shared/ui/Card";
@@ -18,13 +19,15 @@ export default function MissionDrawResult({
   retryDisabled = false,
   startDisabled = false,
 }: MissionDrawResultProps) {
+  const categoryMeta = getMissionCategoryMeta(mission.category);
+
   return (
     <div className="flex min-h-[calc(100dvh-120px)] flex-col bg-[#FFFFF7] px-2 py-4">
       <div className="flex flex-1 flex-col items-center justify-center">
         <h2 className="text-lg font-bold text-black-950">이번 미션은</h2>
         <Card className="mt-5 w-full max-w-[300px] rounded-[18px] border-gray-200 bg-white p-4 shadow-card">
-          <span className="inline-flex rounded-full bg-gray-200 px-3 py-1 text-xs font-semibold text-gray-500">
-            {mission.isLocal ? "지역" : "즉흥"}
+          <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${categoryMeta.className}`}>
+            {categoryMeta.label}
           </span>
           <h3 className="mt-3 text-xl font-bold leading-7 text-black-950">{mission.title}</h3>
           <p className="mt-8 text-xs leading-5 text-black-700">{mission.description}</p>
