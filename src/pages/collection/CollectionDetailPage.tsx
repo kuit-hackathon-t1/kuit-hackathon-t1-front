@@ -48,7 +48,7 @@ export default function CollectionDetailPage() {
 
   return (
     <>
-      <PageHeader title="기록 상세" description={collection.region ?? "지역 정보 없음"} />
+      <PageHeader title="기록 상세" description="채집 기록 상세" />
       <div className="space-y-4">
         <Card>
           <SpecimenImage

@@ -3,6 +3,7 @@ import type {
   CollectionCreateResponse,
   CollectionDetail,
   CollectionListItem,
+  CollectionListResponse,
   CollectionStatus,
 } from "@/features/collection/types/collection";
 import { endpoints } from "@/shared/api/endpoints";
@@ -25,7 +26,8 @@ export async function getCollections(
     status?: CollectionStatus;
   },
 ): Promise<CollectionListItem[]> {
-  return fetchClient.get<CollectionListItem[]>(endpoints.collections.list(tripId, status), { userId });
+  const response = await fetchClient.get<CollectionListResponse>(endpoints.collections.list(tripId, status), { userId });
+  return response.collections;
 }
 
 export async function getCollection(userId: number, collectionId: number): Promise<CollectionDetail> {

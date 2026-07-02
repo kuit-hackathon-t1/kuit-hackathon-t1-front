@@ -1,7 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router";
 
-import { checkNickname } from "@/features/auth/api/authApi";
 import { useLoginMutation } from "@/features/auth/queries/useLoginMutation";
 import { useAuthStore } from "@/features/auth/stores/authStore";
 import Button from "@/shared/ui/Button";
@@ -18,11 +17,16 @@ export default function OnboardingPage() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const nextNickname = nickname.trim();
+
+    if (nextNickname.length < 1 || nextNickname.length > 15) {
+      setMessage("닉네임은 1자 이상 15자 이하로 입력해주세요.");
+      return;
+    }
+
     try {
-      const { available } = await checkNickname(nextNickname);
       const user = await loginMutation.mutateAsync(nextNickname);
       login(user);
-      setMessage(available ? "로그인되었습니다." : "닉네임을 확인해주세요.");
+      setMessage("로그인되었습니다.");
       navigate("/home", { replace: true });
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "로그인에 실패했습니다.");
@@ -44,7 +48,8 @@ export default function OnboardingPage() {
             value={nickname}
             onChange={(event) => setNickname(event.target.value)}
             placeholder="닉네임"
-            minLength={2}
+            minLength={1}
+            maxLength={15}
             required
           />
           <Button className="w-full" disabled={loginMutation.isPending}>

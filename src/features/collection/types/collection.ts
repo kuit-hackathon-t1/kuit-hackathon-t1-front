@@ -3,24 +3,24 @@ export type CropType = "BUTTERFLY" | "BEETLE" | "DRAGONFLY";
 
 export type CollectionListItem = {
   collectionId: number;
-  userId?: number;
-  tripId: number;
-  missionId: number;
-  missionTitle: string;
-  missionDescription?: string;
-  status: CollectionStatus;
-  memo: string;
-  cropType: CropType;
   imageId: string | null;
-  region?: string;
+  missionTitle: string;
+  cropType: CropType;
+  status: CollectionStatus;
   createdAt: string;
 };
 
-export type CollectionDetail = CollectionListItem;
-
-export type CollectionCreatePayload = {
+export type CollectionDetail = CollectionListItem & {
   tripId: number;
   missionId: number;
+  missionDescription?: string;
+  memo: string;
+  emotionTags: string[];
+};
+
+export type CollectionCreatePayload = {
+  missionId: number;
+  tripId: number;
   memo: string;
   imageId: string;
   status: CollectionStatus;
@@ -28,7 +28,17 @@ export type CollectionCreatePayload = {
   emotionTags: string[];
 };
 
-export type CollectionCreateResponse = CollectionDetail;
+export type CollectionCreateResponse = {
+  collectionId: number;
+  missionId: number;
+  missionStatus: CollectionStatus;
+  createdAt: string;
+};
+
+export type CollectionListResponse = {
+  tripId: number;
+  collections: CollectionListItem[];
+};
 
 export type LocalImage = {
   id: string;

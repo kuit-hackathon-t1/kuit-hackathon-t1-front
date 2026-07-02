@@ -1,14 +1,14 @@
 import { Link, useNavigate } from "react-router";
 
 import { useMissionListQuery } from "@/features/mission/queries/useMissionListQuery";
-import type { Trip } from "@/features/trip/types/trip";
+import type { Trip, TripEndResponse } from "@/features/trip/types/trip";
 import Button from "@/shared/ui/Button";
 import Card from "@/shared/ui/Card";
 
 type ActiveTripHomeProps = {
   trip: Trip;
   userId?: number;
-  onEndTrip: () => Promise<Trip>;
+  onEndTrip: () => Promise<TripEndResponse>;
 };
 
 export default function ActiveTripHome({ trip, userId, onEndTrip }: ActiveTripHomeProps) {
@@ -17,8 +17,8 @@ export default function ActiveTripHome({ trip, userId, onEndTrip }: ActiveTripHo
   const activeMissions = activeMissionQuery.data ?? [];
 
   async function handleEndTrip() {
-    const endedTrip = await onEndTrip();
-    navigate(`/trips/${endedTrip.tripId}/review`);
+    await onEndTrip();
+    navigate(`/trips/${trip.tripId}/review`);
   }
 
   return (

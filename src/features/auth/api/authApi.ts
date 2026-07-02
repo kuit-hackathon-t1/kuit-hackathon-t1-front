@@ -6,7 +6,7 @@ export async function checkNickname(nickname: string): Promise<{ available: bool
   const normalized = nickname.trim();
 
   // Deprecated: the server has no nickname availability API yet.
-  return { available: normalized.length >= 2 };
+  return { available: normalized.length >= 1 && normalized.length <= 15 };
 }
 
 export async function loginWithNickname(nickname: string): Promise<User> {
