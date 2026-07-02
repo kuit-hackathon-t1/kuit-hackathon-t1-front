@@ -1,5 +1,5 @@
 export type CollectionStatus = "SUCCESS" | "FAILURE";
-export type CropType = "BUTTERFLY" | "BEETLE" | "DRAGONFLY";
+export type CropType = "SNAIL" | "BEETLE" | "BUTTERFLY" | "MOTH";
 
 export type CollectionListItem = {
   collectionId: number;
