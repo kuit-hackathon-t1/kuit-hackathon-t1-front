@@ -14,14 +14,14 @@ export default function ActiveTripHome({ trip, onEndTrip }: ActiveTripHomeProps)
 
   async function handleEndTrip() {
     const endedTrip = await onEndTrip();
-    navigate(`/trips/${endedTrip.id}/review`);
+    navigate(`/trips/${endedTrip.tripId}/review`);
   }
 
   return (
     <div className="space-y-4">
       <Card>
         <p className="text-sm font-medium text-emerald-700">진행 중인 여행</p>
-        <h2 className="mt-2 text-xl font-bold text-neutral-950">{trip.title}</h2>
+        <h2 className="mt-2 text-xl font-bold text-neutral-950">{trip.tripName}</h2>
         <p className="mt-2 text-sm text-neutral-600">{trip.region}</p>
         <p className="mt-1 text-sm text-neutral-500">
           {trip.startDate} - {trip.endDate}

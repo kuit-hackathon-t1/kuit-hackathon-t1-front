@@ -21,7 +21,7 @@ export default function MissionListPage() {
   const [tab, setTab] = useState<MissionTab>("ALL");
 
   async function loadMissions(activeTrip: Trip) {
-    setMissions(await getMissions(activeTrip.id));
+    setMissions(await getMissions(activeTrip.tripId));
   }
 
   useEffect(() => {
@@ -37,7 +37,7 @@ export default function MissionListPage() {
 
   async function handleGenerate() {
     if (!user || !trip) return;
-    await generateMission(user.userId, trip.id);
+    await generateMission(user.userId, trip.tripId);
     await loadMissions(trip);
   }
 
@@ -65,7 +65,7 @@ export default function MissionListPage() {
 
   return (
     <>
-      <PageHeader title="미션" description={trip.title} action={<Button onClick={handleGenerate}>랜덤 뽑기</Button>} />
+      <PageHeader title="미션" description={trip.tripName} action={<Button onClick={handleGenerate}>랜덤 뽑기</Button>} />
       <MissionTabs value={tab} onChange={setTab} />
       <div className="mt-4 space-y-3">
         {visibleMissions.length > 0 ? (

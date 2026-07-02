@@ -1,9 +1,7 @@
-import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
 
 import { useAuthStore } from "@/features/auth/stores/authStore";
-import { getTripReview } from "@/features/trip/api/tripApi";
-import type { TripReview } from "@/features/trip/types/trip";
+import { useTripReviewQuery } from "@/features/trip/queries/useTripReviewQuery";
 import Button from "@/shared/ui/Button";
 import Card from "@/shared/ui/Card";
 import EmptyState from "@/shared/ui/EmptyState";
@@ -13,16 +11,21 @@ export default function TripReviewPage() {
   const { tripId } = useParams();
   const user = useAuthStore((state) => state.currentUser);
   const userId = user?.userId;
-  const [review, setReview] = useState<TripReview | null>(null);
+  const reviewQuery = useTripReviewQuery(userId, tripId ? Number(tripId) : undefined);
+  const review = reviewQuery.data;
 
-  useEffect(() => {
-    async function loadReview() {
-      if (!userId || !tripId) return;
-      setReview(await getTripReview(Number(tripId), userId));
-    }
+  if (reviewQuery.isLoading) {
+    return <p className="text-sm text-neutral-500">불러오는 중...</p>;
+  }
 
-    void loadReview();
-  }, [tripId, userId]);
+  if (reviewQuery.isError) {
+    return (
+      <EmptyState
+        title="회고 정보를 불러오지 못했습니다"
+        description={reviewQuery.error instanceof Error ? reviewQuery.error.message : "잠시 후 다시 시도해주세요."}
+      />
+    );
+  }
 
   if (!review) {
     return <EmptyState title="회고 정보를 찾을 수 없습니다" description="홈에서 여행을 다시 확인해주세요." />;
@@ -30,7 +33,7 @@ export default function TripReviewPage() {
 
   return (
     <>
-      <PageHeader title="여행 회고" description={review.trip.title} />
+      <PageHeader title="여행 회고" description={review.trip.tripName} />
       <Card>
         <div className="grid grid-cols-3 gap-2 text-center">
           <div>

@@ -1,30 +1,45 @@
 export type CompanionType = "ALONE" | "FRIEND" | "COUPLE" | "ETC";
 export type TripStatus = "ACTIVE" | "ENDED";
+export type TripMood = "EMOTIONAL" | "WANDERING" | "LOCAL" | "COURAGE";
 
-export type Trip = {
-  id: number;
-  userId: number;
-  title: string;
+export type TripSummary = {
+  totalCount: number;
+  completedCount: number;
+  failedCount: number;
+};
+
+export type CurrentTrip = {
+  tripId: number;
+  tripName: string;
   region: string;
   startDate: string;
   endDate: string;
   companionType: CompanionType;
+  mood: TripMood;
   status: TripStatus;
-  createdAt: string;
+  missionSummary: TripSummary;
+  collectionSummary: TripSummary;
+};
+
+export type CurrentTripResponse = {
+  hasActiveTrip: boolean;
+  trip: CurrentTrip | null;
 };
 
 export type TripCreatePayload = {
-  userId: number;
-  title: string;
+  tripName: string;
   region: string;
   startDate: string;
   endDate: string;
   companionType: CompanionType;
+  mood: TripMood;
 };
 
 export type TripReview = {
-  trip: Trip;
+  trip: CurrentTrip;
   totalCollections: number;
   completedCount: number;
   failedCount: number;
 };
+
+export type Trip = CurrentTrip;
