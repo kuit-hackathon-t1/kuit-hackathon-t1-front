@@ -57,7 +57,7 @@ export default function TripForm({ onSubmit }: TripFormProps) {
             <option value="ALONE">혼자</option>
             <option value="FRIEND">친구</option>
             <option value="COUPLE">연인</option>
-            <option value="ETC">기타</option>
+            <option value="FAMILY">가족</option>
           </select>
         </label>
         <label className="block text-sm font-medium text-neutral-700">

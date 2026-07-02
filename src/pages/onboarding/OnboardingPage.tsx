@@ -11,19 +11,19 @@ const introSlides = [
   {
     title: "여행 속 청춘의 순간을 채집해요",
     description: "여행지에서 스쳐 지나가는 간판, 바람, 그림자, 이상한 순간들. 그 순간을 모아 청춘도감으로 만들어봐요.",
-    image: "/images/onboarding/butterfly-specimen.png",
+    image: "/images/onboarding/intro-butterfly.png",
     fallback: "나비 표본",
   },
   {
     title: "미션을 통해 더 많은 추억을 남겨요",
     description: "다양한 유형의 미션을 새롭게 뽑아 도전해봐요",
-    image: "/images/onboarding/mission-card.png",
+    image: "/images/onboarding/mission-card-sample.png",
     fallback: "미션 카드",
   },
   {
     title: "실패한 순간도 추억으로 남겨요",
     description: "완료한 미션은 선명한 사진 조각으로, 실패한 미션은 반투명하게 모든 순간을 기억해요",
-    image: "/images/onboarding/beetle-specimen.png",
+    image: "/images/onboarding/intro-beetle.png",
     fallback: "흐린 표본",
   },
 ];

@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 
 import { useAuthStore } from "@/features/auth/stores/authStore";
 import SpecimenImage from "@/features/collection/components/SpecimenImage";
-import { getLocalImage } from "@/features/collection/lib/localImageStorage";
+import { useLocalImageUrl } from "@/features/collection/hooks/useLocalImageUrl";
 import { useCollectionDetailQuery } from "@/features/collection/queries/useCollectionDetailQuery";
 import Card from "@/shared/ui/Card";
 import EmptyState from "@/shared/ui/EmptyState";
@@ -15,28 +14,7 @@ export default function CollectionDetailPage() {
   const numericCollectionId = collectionId ? Number(collectionId) : undefined;
   const collectionQuery = useCollectionDetailQuery(user?.userId, numericCollectionId);
   const collection = collectionQuery.data;
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
-
-  useEffect(() => {
-    let objectUrl: string | null = null;
-    let cancelled = false;
-
-    async function loadImage() {
-      setImageUrl(null);
-      if (!collection?.imageId) return;
-      const localImage = await getLocalImage(collection.imageId);
-      if (!localImage || cancelled) return;
-      objectUrl = URL.createObjectURL(localImage.blob);
-      setImageUrl(objectUrl);
-    }
-
-    void loadImage();
-
-    return () => {
-      cancelled = true;
-      if (objectUrl) URL.revokeObjectURL(objectUrl);
-    };
-  }, [collection?.imageId]);
+  const { imageUrl } = useLocalImageUrl(collection?.imageId);
 
   if (collectionQuery.isLoading) {
     return <p className="text-sm text-neutral-500">기록을 불러오는 중...</p>;

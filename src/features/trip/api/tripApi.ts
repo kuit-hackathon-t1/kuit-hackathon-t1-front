@@ -4,6 +4,7 @@ import type {
   TripCreatePayload,
   TripCreateResponse,
   TripEndResponse,
+  TripListResponse,
   TripReview,
 } from "@/features/trip/types/trip";
 import { endpoints } from "@/shared/api/endpoints";
@@ -11,6 +12,10 @@ import { fetchClient } from "@/shared/api/fetchClient";
 
 export async function getCurrentTrip(userId: number): Promise<CurrentTripResponse> {
   return fetchClient.get<CurrentTripResponse>(endpoints.trips.current, { userId });
+}
+
+export async function getTrips(userId: number): Promise<TripListResponse> {
+  return fetchClient.get<TripListResponse>(endpoints.trips.list, { userId });
 }
 
 export async function getActiveTrip(userId: number): Promise<Trip | null> {

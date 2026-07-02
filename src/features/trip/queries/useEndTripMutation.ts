@@ -13,6 +13,7 @@ export function useEndTripMutation(userId?: number) {
     },
     onSuccess: (trip) => {
       void queryClient.invalidateQueries({ queryKey: tripKeys.current(userId) });
+      void queryClient.invalidateQueries({ queryKey: tripKeys.list(userId) });
       void queryClient.invalidateQueries({ queryKey: tripKeys.review(userId, trip.tripId) });
     },
   });

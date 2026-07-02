@@ -14,6 +14,7 @@ export function useCreateTripMutation(userId?: number) {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: tripKeys.current(userId) });
+      void queryClient.invalidateQueries({ queryKey: tripKeys.list(userId) });
     },
   });
 }
