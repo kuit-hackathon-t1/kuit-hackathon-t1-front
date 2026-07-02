@@ -14,12 +14,13 @@ export function useCreateCollectionMutation(userId?: number) {
       if (userId === undefined) throw new Error("User is required to create a collection.");
       return createCollection(userId, payload);
     },
-    onSuccess: (collection) => {
-      void queryClient.invalidateQueries({ queryKey: collectionKeys.list(collection.tripId) });
-      void queryClient.invalidateQueries({ queryKey: missionKeys.list(collection.tripId) });
-      void queryClient.invalidateQueries({ queryKey: missionKeys.detail(collection.missionId) });
+    onSuccess: (_response, payload) => {
+      void queryClient.invalidateQueries({ queryKey: collectionKeys.list(payload.tripId) });
+      void queryClient.invalidateQueries({ queryKey: missionKeys.list(payload.tripId) });
+      void queryClient.invalidateQueries({ queryKey: missionKeys.detail(payload.missionId) });
       void queryClient.invalidateQueries({ queryKey: tripKeys.current(userId) });
-      void queryClient.invalidateQueries({ queryKey: tripKeys.review(userId, collection.tripId) });
+      void queryClient.invalidateQueries({ queryKey: tripKeys.list(userId) });
+      void queryClient.invalidateQueries({ queryKey: tripKeys.review(userId, payload.tripId) });
     },
   });
 }

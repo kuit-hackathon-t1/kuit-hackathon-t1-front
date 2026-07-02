@@ -1,5 +1,3 @@
-import { Link } from "react-router";
-
 import MissionStatusBadge from "@/features/mission/components/MissionStatusBadge";
 import type { Mission } from "@/features/mission/types/mission";
 import Button from "@/shared/ui/Button";
@@ -8,14 +6,14 @@ import Card from "@/shared/ui/Card";
 type MissionCardProps = {
   mission: Mission;
   onStart?: (mission: Mission) => void;
+  onOpen?: (mission: Mission) => void;
 };
 
-export default function MissionCard({ mission, onStart }: MissionCardProps) {
+export default function MissionCard({ mission, onStart, onOpen }: MissionCardProps) {
   const canStart = mission.status === "RECOMMENDED";
-  const canOpen = mission.status === "ACTIVE";
-
-  return (
-    <Card>
+  const canOpen = mission.status === "ACTIVE" || mission.status === "SUCCESS" || mission.status === "FAILURE";
+  const content = (
+    <>
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-base font-semibold text-neutral-950">{mission.title}</p>
@@ -25,22 +23,25 @@ export default function MissionCard({ mission, onStart }: MissionCardProps) {
       </div>
       <div className="mt-4 flex items-center justify-between text-xs text-neutral-500">
         <span>{mission.category}</span>
-        {mission.difficulty ? <span>{mission.difficulty}</span> : null}
+        <span>{mission.isLocal ? "LOCAL" : "RANDOM"}</span>
       </div>
-      {canStart || canOpen ? (
+    </>
+  );
+
+  return (
+    <Card>
+      {canOpen && onOpen ? (
+        <button className="block w-full text-left" type="button" onClick={() => onOpen(mission)}>
+          {content}
+        </button>
+      ) : (
+        content
+      )}
+      {canStart ? (
         <div className="mt-4">
-          {canStart ? (
-            <Button className="w-full" onClick={() => onStart?.(mission)}>
-              미션 시작
-            </Button>
-          ) : null}
-          {canOpen ? (
-            <Link to={`/missions/${mission.missionId}/progress`}>
-              <Button className="mt-2 w-full" variant="secondary">
-                진행 화면으로 이동
-              </Button>
-            </Link>
-          ) : null}
+          <Button className="w-full" onClick={() => onStart?.(mission)}>
+            미션 시작
+          </Button>
         </div>
       ) : null}
     </Card>

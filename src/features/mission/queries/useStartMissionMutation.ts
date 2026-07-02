@@ -12,10 +12,11 @@ export function useStartMissionMutation(userId?: number, tripId?: number) {
       if (userId === undefined) throw new Error("User is required to start a mission.");
       return startMission(userId, missionId);
     },
-    onSuccess: (mission) => {
-      void queryClient.invalidateQueries({ queryKey: missionKeys.list(tripId ?? mission.tripId) });
-      void queryClient.invalidateQueries({ queryKey: missionKeys.detail(mission.missionId) });
+    onSuccess: (response) => {
+      void queryClient.invalidateQueries({ queryKey: missionKeys.list(tripId) });
+      void queryClient.invalidateQueries({ queryKey: missionKeys.detail(response.missionId) });
       void queryClient.invalidateQueries({ queryKey: tripKeys.current(userId) });
+      void queryClient.invalidateQueries({ queryKey: tripKeys.list(userId) });
     },
   });
 }

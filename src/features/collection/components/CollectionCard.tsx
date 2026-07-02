@@ -1,33 +1,12 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router";
 
 import SpecimenImage from "@/features/collection/components/SpecimenImage";
-import { getLocalImage } from "@/features/collection/lib/localImageStorage";
+import { useLocalImageUrl } from "@/features/collection/hooks/useLocalImageUrl";
 import type { CollectionListItem } from "@/features/collection/types/collection";
 import Card from "@/shared/ui/Card";
 
 export default function CollectionCard({ collection }: { collection: CollectionListItem }) {
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
-
-  useEffect(() => {
-    let objectUrl: string | null = null;
-    let cancelled = false;
-
-    async function loadImage() {
-      if (!collection.imageId) return;
-      const localImage = await getLocalImage(collection.imageId);
-      if (!localImage || cancelled) return;
-      objectUrl = URL.createObjectURL(localImage.blob);
-      setImageUrl(objectUrl);
-    }
-
-    void loadImage();
-
-    return () => {
-      cancelled = true;
-      if (objectUrl) URL.revokeObjectURL(objectUrl);
-    };
-  }, [collection.imageId]);
+  const { imageUrl } = useLocalImageUrl(collection.imageId);
 
   return (
     <Link to={`/collections/${collection.collectionId}`}>
