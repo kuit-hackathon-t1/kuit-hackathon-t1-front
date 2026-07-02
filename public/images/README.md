@@ -19,7 +19,7 @@
 - `public/images/onboarding/butterfly-white.png`
 - `public/images/onboarding/intro-butterfly.png`
 - `public/images/onboarding/intro-beetle.png`
-- `public/images/onboarding/intro-dragonfly.png`
+- `public/images/onboarding/intro-moth.png`
 - `public/images/onboarding/mission-card-sample.png`
 - `public/images/onboarding/failed-memory-placeholder.png`
 - `public/images/home/empty-book.png`
@@ -33,12 +33,14 @@
 - `public/images/mission/draw-sparkle.png`
 - `public/images/record/camera-placeholder.png`
 - `public/images/record/photo-frame.png`
-- `public/images/specimen/butterfly-icon.png`
-- `public/images/specimen/beetle-icon.png`
-- `public/images/specimen/dragonfly-icon.png`
-- `public/images/specimen/butterfly-mask.svg`
+- `public/images/specimen/snail-icon.svg`
+- `public/images/specimen/beetle-icon.svg`
+- `public/images/specimen/butterfly-icon.svg`
+- `public/images/specimen/moth-icon.svg`
+- `public/images/specimen/snail-mask.svg`
 - `public/images/specimen/beetle-mask.svg`
-- `public/images/specimen/dragonfly-mask.svg`
+- `public/images/specimen/butterfly-mask.svg`
+- `public/images/specimen/moth-mask.svg`
 
 ## Icon Notes
 

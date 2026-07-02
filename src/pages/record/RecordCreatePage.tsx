@@ -53,7 +53,7 @@ export default function RecordCreatePage() {
           status,
           imageFile: null,
           imageId: null,
-          cropType: "BUTTERFLY",
+          cropType: "SNAIL",
           memo: "",
         }
       : null,
@@ -175,7 +175,7 @@ export default function RecordCreatePage() {
 
           <Card className="mt-auto rounded-[28px] border-gray-200">
             <p className="text-base font-bold text-black-950">어떤 모양으로 채집할까요?</p>
-            <p className="mt-2 text-xs leading-5 text-gray-600">달팽이 느낌의 선택지는 잠자리 조각으로 저장돼요.</p>
+            <p className="mt-2 text-xs leading-5 text-gray-600">청춘 조각으로 남길 표본 모양을 골라주세요.</p>
             <div className="mt-4">
               <ShapeSelector value={flow.cropType} onChange={(cropType) => updateFlow({ cropType })} />
             </div>
@@ -191,7 +191,7 @@ export default function RecordCreatePage() {
           <h1 className="mt-4 text-3xl font-bold text-black-950">한줄평 남기기</h1>
           <p className="mt-3 text-sm leading-6 text-black-700">이 순간을 한 줄로 남겨주세요</p>
           <div className="mt-8">
-            <SpecimenImage imageUrl={previewUrl} cropType={flow.cropType ?? "BUTTERFLY"} status={flow.status} />
+            <SpecimenImage imageUrl={previewUrl} cropType={flow.cropType ?? "SNAIL"} status={flow.status} />
           </div>
           <textarea
             className="mt-6 min-h-32 w-full rounded-[24px] border border-gray-200 bg-white p-4 text-base text-black-950 shadow-card outline-none placeholder:text-gray-400 focus:border-primary"
