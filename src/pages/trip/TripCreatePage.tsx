@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router";
 
+import okayIcon from "@/assets/icons/okay.svg";
 import MissionDrawLoading from "@/features/mission/components/MissionDrawLoading";
 import MissionDrawResult from "@/features/mission/components/MissionDrawResult";
 import { useRandomMissionMutation } from "@/features/mission/queries/useRandomMissionMutation";
@@ -329,7 +330,9 @@ function CreatedStep({
 
   return (
     <section className="flex min-h-[calc(100dvh-48px)] flex-col items-center justify-center text-center">
-      <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary text-4xl font-bold text-white">✓</div>
+      <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary">
+        <img className="h-9 w-9" src={okayIcon} alt="" aria-hidden="true" />
+      </div>
       <h1 className="mt-8 text-3xl font-bold text-black-950">여행이 시작됐어요</h1>
       <Card className="mt-8 w-full rounded-[28px] border-gray-200 text-left">
         <p className="text-xl font-bold text-black-950">{form.tripName}</p>

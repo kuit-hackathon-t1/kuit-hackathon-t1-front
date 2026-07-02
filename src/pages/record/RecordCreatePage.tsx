@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, Navigate, useLocation, useSearchParams } from "react-router";
 
+import cameraIcon from "@/assets/icons/camera.svg";
 import { useAuthStore } from "@/features/auth/stores/authStore";
 import ShapeSelector from "@/features/collection/components/ShapeSelector";
 import SpecimenImage from "@/features/collection/components/SpecimenImage";
@@ -157,7 +158,7 @@ export default function RecordCreatePage() {
             ) : (
               <>
                 <span className="flex h-16 w-16 items-center justify-center rounded-full bg-primary-soft text-3xl text-primary" aria-hidden="true">
-                  📷
+                  <img className="h-7 w-7" src={cameraIcon} alt="" />
                 </span>
                 <span className="mt-4 text-base font-bold text-black-950">사진 추가하기</span>
               </>

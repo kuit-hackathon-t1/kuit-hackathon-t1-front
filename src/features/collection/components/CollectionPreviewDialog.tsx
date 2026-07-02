@@ -1,3 +1,4 @@
+import closeIcon from "@/assets/icons/close.svg";
 import SpecimenImage from "@/features/collection/components/SpecimenImage";
 import { useLocalImageUrl } from "@/features/collection/hooks/useLocalImageUrl";
 import type { CollectionDetail } from "@/features/collection/types/collection";
@@ -16,7 +17,7 @@ export default function CollectionPreviewDialog({ collection, isLoading, onClose
     <div className="fixed inset-x-0 bottom-0 z-[60] mx-auto flex w-full max-w-[430px] items-end justify-center bg-black/20 px-5 pb-24 pt-6">
       <Card className="max-h-[76dvh] w-full max-w-[360px] overflow-y-auto rounded-[28px] border-gray-200 bg-white p-5 shadow-card">
         <button className="text-2xl text-gray-500" type="button" aria-label="닫기" onClick={onClose}>
-          ×
+          <img className="h-4 w-4" src={closeIcon} alt="" aria-hidden="true" />
         </button>
         {isLoading ? (
           <p className="mt-8 text-center text-sm text-gray-600">채집 조각을 불러오는 중...</p>

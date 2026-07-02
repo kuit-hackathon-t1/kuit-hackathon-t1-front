@@ -1,3 +1,4 @@
+import closeIcon from "@/assets/icons/close.svg";
 import { companionLabels, moodLabels, type Trip } from "@/features/trip/types/trip";
 import Button from "@/shared/ui/Button";
 import Card from "@/shared/ui/Card";
@@ -23,7 +24,7 @@ export default function TripInfoDialog({ trip, open, onClose, onRequestEnd }: Tr
             aria-label="닫기"
             onClick={onClose}
           >
-            ×
+            <img className="h-4 w-4" src={closeIcon} alt="" aria-hidden="true" />
           </button>
         </div>
 

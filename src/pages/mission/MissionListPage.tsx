@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router";
 
+import closeIcon from "@/assets/icons/close.svg";
+import okayIcon from "@/assets/icons/okay.svg";
+import shuffleIcon from "@/assets/icons/shuffle.svg";
+import warningIcon from "@/assets/icons/warning.svg";
 import { useAuthStore } from "@/features/auth/stores/authStore";
 import MissionDrawFlow from "@/features/mission/components/MissionDrawFlow";
 import MissionTabs, { type MissionTab } from "@/features/mission/components/MissionTabs";
@@ -110,6 +114,7 @@ export default function MissionListPage() {
               size="lg"
               onClick={openDrawMode}
             >
+              <img className="h-5 w-5" src={shuffleIcon} alt="" aria-hidden="true" />
               랜덤 미션 뽑기
             </Button>
           </div>
@@ -233,7 +238,7 @@ function MissionListDialog({
             aria-label="닫기"
             onClick={onClose}
           >
-            ×
+            <img className="h-4 w-4" src={closeIcon} alt="" aria-hidden="true" />
           </button>
         </div>
         {isCompleted ? (
@@ -300,7 +305,7 @@ function ResultConfirm({
   return (
     <div className="mt-6 text-center">
       <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary-soft text-2xl text-primary">
-        {isSuccess ? "✓" : "!"}
+        <img className="h-6 w-6" src={isSuccess ? okayIcon : warningIcon} alt="" aria-hidden="true" />
       </div>
       <h2 className="mt-4 text-xl font-bold text-black-950">{isSuccess ? "고생했어요!" : "미션에 실패하셨나요?"}</h2>
       <p className="mt-3 text-sm leading-6 text-black-700">

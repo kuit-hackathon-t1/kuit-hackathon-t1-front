@@ -1,6 +1,15 @@
 import { Outlet, NavLink } from "react-router";
 
+import homeIcon from "@/assets/icons/home.svg";
+import missionIcon from "@/assets/icons/mission.svg";
+import recordIcon from "@/assets/icons/record.svg";
 import { cn } from "@/shared/lib/cn";
+
+const tabs = [
+  { to: "/missions", label: "미션", icon: missionIcon },
+  { to: "/home", label: "메인홈", icon: homeIcon },
+  { to: "/collections", label: "채집 기록", icon: recordIcon },
+];
 
 export default function MainTabLayout() {
   return (
@@ -11,44 +20,25 @@ export default function MainTabLayout() {
 
       <nav className="fixed bottom-0 left-1/2 z-50 w-full max-w-[430px] -translate-x-1/2 border-t border-neutral-200 bg-white/95 backdrop-blur">
         <div className="grid h-16 grid-cols-3">
-          <NavLink
-            to="/missions"
-            className={({ isActive }) =>
-              cn(
-                "flex flex-col items-center justify-center gap-1 text-xs font-medium",
-                isActive ? "text-emerald-700" : "text-neutral-500",
-              )
-            }
-          >
-            <span aria-hidden="true">◎</span>
-            미션
-          </NavLink>
-
-          <NavLink
-            to="/home"
-            className={({ isActive }) =>
-              cn(
-                "flex flex-col items-center justify-center gap-1 text-xs font-medium",
-                isActive ? "text-emerald-700" : "text-neutral-500",
-              )
-            }
-          >
-            <span aria-hidden="true">⌂</span>
-            메인홈
-          </NavLink>
-
-          <NavLink
-            to="/collections"
-            className={({ isActive }) =>
-              cn(
-                "flex flex-col items-center justify-center gap-1 text-xs font-medium",
-                isActive ? "text-emerald-700" : "text-neutral-500",
-              )
-            }
-          >
-            <span aria-hidden="true">▣</span>
-            채집 기록
-          </NavLink>
+          {tabs.map((tab) => (
+            <NavLink
+              key={tab.to}
+              to={tab.to}
+              className={({ isActive }) =>
+                cn(
+                  "flex flex-col items-center justify-center gap-1 text-xs font-medium",
+                  isActive ? "text-emerald-700" : "text-neutral-500",
+                )
+              }
+            >
+              {({ isActive }) => (
+                <>
+                  <img className={cn("h-5 w-5", isActive ? "opacity-100" : "opacity-55")} src={tab.icon} alt="" aria-hidden="true" />
+                  {tab.label}
+                </>
+              )}
+            </NavLink>
+          ))}
         </div>
       </nav>
     </div>

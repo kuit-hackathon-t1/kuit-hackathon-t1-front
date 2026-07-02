@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router";
 
+import reviewIcon from "@/assets/icons/review.svg";
 import { useAuthStore } from "@/features/auth/stores/authStore";
 import CollectionPreviewDialog from "@/features/collection/components/CollectionPreviewDialog";
 import SpecimenBook from "@/features/collection/components/SpecimenBook";
@@ -76,7 +77,7 @@ export default function CollectionListPage() {
       <header className="relative flex h-22 items-center justify-center border-b border-gray-200 bg-white px-5">
         <h1 className="text-xl font-bold text-black-950">채집 기록</h1>
         <button className="absolute right-5 top-1/2 h-9 w-9 -translate-y-1/2 rounded-full bg-gray-50 p-2" type="button" aria-label="기록 편집">
-          <img className="h-full w-full" src="/images/icons/pencil.svg" alt="" onError={(event) => event.currentTarget.remove()} />
+          <img className="h-full w-full" src={reviewIcon} alt="" aria-hidden="true" />
         </button>
       </header>
 

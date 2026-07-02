@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 
+import cameraIcon from "@/assets/icons/camera.svg";
+import closeIcon from "@/assets/icons/close.svg";
+import okayIcon from "@/assets/icons/okay.svg";
+import shuffleIcon from "@/assets/icons/shuffle.svg";
+import warningIcon from "@/assets/icons/warning.svg";
 import { useAuthStore } from "@/features/auth/stores/authStore";
 import { useMissionListQuery } from "@/features/mission/queries/useMissionListQuery";
 import type { Mission } from "@/features/mission/types/mission";
@@ -105,7 +110,7 @@ export default function ActiveTripHome({ trip, userId }: ActiveTripHomeProps) {
               >
                 <span className="line-clamp-2 font-medium">{mission.title}</span>
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-lg shadow-card" aria-hidden="true">
-                  📷
+                  <img className="h-5 w-5" src={cameraIcon} alt="" />
                 </span>
               </button>
             ))
@@ -119,6 +124,7 @@ export default function ActiveTripHome({ trip, userId }: ActiveTripHomeProps) {
 
       <Link to="/missions?draw=1">
         <Button className="w-full" size="lg">
+          <img className="h-5 w-5" src={shuffleIcon} alt="" aria-hidden="true" />
           랜덤 미션 뽑기
         </Button>
       </Link>
@@ -180,7 +186,7 @@ function MissionHomeDialog({
             aria-label="닫기"
             onClick={onClose}
           >
-            ×
+            <img className="h-4 w-4" src={closeIcon} alt="" aria-hidden="true" />
           </button>
         </div>
 
@@ -205,7 +211,7 @@ function MissionHomeDialog({
         ) : (
           <div className="mt-6 text-center">
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary-soft text-2xl text-primary">
-              {isSuccess ? "✓" : "!"}
+              <img className="h-6 w-6" src={isSuccess ? okayIcon : warningIcon} alt="" aria-hidden="true" />
             </div>
             <h2 className="mt-4 text-xl font-bold text-black-950">{isSuccess ? "고생했어요!" : "미션에 실패하셨나요?"}</h2>
             <p className="mt-3 text-sm leading-6 text-black-700">
