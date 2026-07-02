@@ -1,4 +1,4 @@
-export type RecordResultStatus = "COMPLETED" | "FAILED";
+export type RecordResultStatus = "SUCCESS" | "FAILURE";
 
 export type RecordDraft = {
   tripId: number;

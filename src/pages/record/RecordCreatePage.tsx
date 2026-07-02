@@ -12,7 +12,7 @@ type RecordRouteState = {
 };
 
 function isRecordStatus(value: string | null): value is RecordResultStatus {
-  return value === "COMPLETED" || value === "FAILED";
+  return value === "SUCCESS" || value === "FAILURE";
 }
 
 export default function RecordCreatePage() {
@@ -39,7 +39,7 @@ export default function RecordCreatePage() {
     <>
       <PageHeader
         title="기록 작성"
-        description={status === "COMPLETED" ? "채집한 장면을 사진과 한줄평으로 남깁니다." : "실패한 미션도 흐릿한 표본으로 보관합니다."}
+        description={status === "SUCCESS" ? "채집한 장면을 사진과 한줄평으로 남깁니다." : "실패한 미션도 흐릿한 표본으로 보관합니다."}
       />
       <RecordForm tripId={tripId} missionId={missionId} status={status} onSubmit={handleSubmit} />
     </>

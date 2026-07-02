@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 
-import { getMission } from "@/features/mission/api/missionApi";
+import { useAuthStore } from "@/features/auth/stores/authStore";
 import MissionStatusBadge from "@/features/mission/components/MissionStatusBadge";
-import type { Mission } from "@/features/mission/types/mission";
+import { useMissionDetailQuery } from "@/features/mission/queries/useMissionDetailQuery";
 import type { RecordResultStatus } from "@/features/record/types/record";
 import Button from "@/shared/ui/Button";
 import Card from "@/shared/ui/Card";
@@ -13,22 +12,20 @@ import PageHeader from "@/shared/ui/PageHeader";
 export default function MissionProgressPage() {
   const navigate = useNavigate();
   const { missionId } = useParams();
-  const [mission, setMission] = useState<Mission | null>(null);
-
-  useEffect(() => {
-    async function loadMission() {
-      if (!missionId) return;
-      setMission(await getMission(Number(missionId)));
-    }
-
-    void loadMission();
-  }, [missionId]);
+  const user = useAuthStore((state) => state.currentUser);
+  const numericMissionId = missionId ? Number(missionId) : undefined;
+  const missionQuery = useMissionDetailQuery(user?.userId, numericMissionId);
+  const mission = missionQuery.data;
 
   function moveToRecord(status: RecordResultStatus) {
     if (!mission) return;
-    navigate(`/records/new?tripId=${mission.tripId}&missionId=${mission.id}&status=${status}`, {
-      state: { tripId: mission.tripId, missionId: mission.id, status },
+    navigate(`/records/new?tripId=${mission.tripId}&missionId=${mission.missionId}&status=${status}`, {
+      state: { tripId: mission.tripId, missionId: mission.missionId, status },
     });
+  }
+
+  if (missionQuery.isLoading) {
+    return <p className="text-sm text-neutral-500">미션을 불러오는 중...</p>;
   }
 
   if (!mission) {
@@ -47,8 +44,8 @@ export default function MissionProgressPage() {
           <MissionStatusBadge status={mission.status} />
         </div>
         <div className="mt-6 grid gap-2">
-          <Button onClick={() => moveToRecord("COMPLETED")}>장면 채집하기</Button>
-          <Button variant="secondary" onClick={() => moveToRecord("FAILED")}>
+          <Button onClick={() => moveToRecord("SUCCESS")}>장면 채집하기</Button>
+          <Button variant="secondary" onClick={() => moveToRecord("FAILURE")}>
             실패로 남기기
           </Button>
         </div>

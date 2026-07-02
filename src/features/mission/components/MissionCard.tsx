@@ -12,7 +12,7 @@ type MissionCardProps = {
 
 export default function MissionCard({ mission, onStart }: MissionCardProps) {
   const canStart = mission.status === "RECOMMENDED";
-  const canOpen = mission.status === "IN_PROGRESS";
+  const canOpen = mission.status === "ACTIVE";
 
   return (
     <Card>
@@ -24,8 +24,8 @@ export default function MissionCard({ mission, onStart }: MissionCardProps) {
         <MissionStatusBadge status={mission.status} />
       </div>
       <div className="mt-4 flex items-center justify-between text-xs text-neutral-500">
-        <span>{mission.missionType}</span>
-        <span>{mission.difficulty}</span>
+        <span>{mission.category}</span>
+        {mission.difficulty ? <span>{mission.difficulty}</span> : null}
       </div>
       {canStart || canOpen ? (
         <div className="mt-4">
@@ -35,7 +35,7 @@ export default function MissionCard({ mission, onStart }: MissionCardProps) {
             </Button>
           ) : null}
           {canOpen ? (
-            <Link to={`/missions/${mission.id}/progress`}>
+            <Link to={`/missions/${mission.missionId}/progress`}>
               <Button className="mt-2 w-full" variant="secondary">
                 진행 화면으로 이동
               </Button>

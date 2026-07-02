@@ -6,12 +6,16 @@ import { createCollection } from "@/features/collection/api/collectionApi";
 import ShapeSelector from "@/features/collection/components/ShapeSelector";
 import SpecimenImage from "@/features/collection/components/SpecimenImage";
 import { saveLocalImage } from "@/features/collection/lib/localImageStorage";
-import type { InsectShape } from "@/features/collection/types/collection";
+import type { CollectionStatus, InsectShape } from "@/features/collection/types/collection";
 import { completeMission } from "@/features/mission/api/missionApi";
 import { useRecordDraftStore } from "@/features/record/stores/recordDraftStore";
 import Button from "@/shared/ui/Button";
 import Card from "@/shared/ui/Card";
 import PageHeader from "@/shared/ui/PageHeader";
+
+function toCollectionStatus(status: "SUCCESS" | "FAILURE"): CollectionStatus {
+  return status === "SUCCESS" ? "COMPLETED" : "FAILED";
+}
 
 export default function PhotoPiecePage() {
   const navigate = useNavigate();
@@ -40,7 +44,7 @@ export default function PhotoPiecePage() {
       userId: user.userId,
       tripId: draft.tripId,
       missionId: draft.missionId,
-      status: draft.status,
+      status: toCollectionStatus(draft.status),
       memo: draft.memo,
       shape,
       localImageId,
@@ -55,12 +59,14 @@ export default function PhotoPiecePage() {
     return <Navigate to="/missions" replace />;
   }
 
+  const collectionStatus = toCollectionStatus(draft.status);
+
   return (
     <>
       <PageHeader title="사진 조각 만들기" description="곤충 모양을 선택해 여행 채집통에 저장합니다." />
       <div className="space-y-4">
         <Card>
-          <SpecimenImage imageUrl={previewUrl} shape={shape} status={draft.status} />
+          <SpecimenImage imageUrl={previewUrl} shape={shape} status={collectionStatus} />
         </Card>
         <ShapeSelector value={shape} onChange={setShape} />
         <Button className="w-full" onClick={handleSave} disabled={isSaving}>

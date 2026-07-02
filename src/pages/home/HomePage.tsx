@@ -29,7 +29,7 @@ export default function HomePage() {
           {currentTripQuery.error instanceof Error ? currentTripQuery.error.message : "여행 정보를 불러오지 못했습니다."}
         </p>
       ) : trip ? (
-        <ActiveTripHome trip={trip} onEndTrip={handleEndTrip} />
+        <ActiveTripHome trip={trip} userId={userId} onEndTrip={handleEndTrip} />
       ) : (
         <BeforeTripHome />
       )}

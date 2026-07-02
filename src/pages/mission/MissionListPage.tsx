@@ -1,53 +1,47 @@
-import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
 
 import { useAuthStore } from "@/features/auth/stores/authStore";
-import { generateMission, getMissions, startMission } from "@/features/mission/api/missionApi";
 import MissionCard from "@/features/mission/components/MissionCard";
 import MissionTabs, { type MissionTab } from "@/features/mission/components/MissionTabs";
-import type { Mission } from "@/features/mission/types/mission";
-import { getActiveTrip } from "@/features/trip/api/tripApi";
-import type { Trip } from "@/features/trip/types/trip";
+import { useMissionListQuery } from "@/features/mission/queries/useMissionListQuery";
+import { useRandomMissionMutation } from "@/features/mission/queries/useRandomMissionMutation";
+import { useStartMissionMutation } from "@/features/mission/queries/useStartMissionMutation";
+import type { Mission, MissionStatus } from "@/features/mission/types/mission";
+import { useCurrentTripQuery } from "@/features/trip/queries/useCurrentTripQuery";
 import Button from "@/shared/ui/Button";
 import EmptyState from "@/shared/ui/EmptyState";
 import PageHeader from "@/shared/ui/PageHeader";
+import { useState } from "react";
+
+function toMissionStatus(tab: MissionTab): MissionStatus | undefined {
+  return tab === "ALL" ? undefined : tab;
+}
 
 export default function MissionListPage() {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.currentUser);
   const userId = user?.userId;
-  const [trip, setTrip] = useState<Trip | null>(null);
-  const [missions, setMissions] = useState<Mission[]>([]);
   const [tab, setTab] = useState<MissionTab>("ALL");
-
-  async function loadMissions(activeTrip: Trip) {
-    setMissions(await getMissions(activeTrip.tripId));
-  }
-
-  useEffect(() => {
-    async function load() {
-      if (!userId) return;
-      const activeTrip = await getActiveTrip(userId);
-      setTrip(activeTrip);
-      if (activeTrip) await loadMissions(activeTrip);
-    }
-
-    void load();
-  }, [userId]);
+  const currentTripQuery = useCurrentTripQuery(userId);
+  const trip = currentTripQuery.data?.hasActiveTrip ? currentTripQuery.data.trip : null;
+  const status = toMissionStatus(tab);
+  const missionListQuery = useMissionListQuery(userId, trip?.tripId, status);
+  const randomMissionMutation = useRandomMissionMutation(userId, trip?.tripId);
+  const startMissionMutation = useStartMissionMutation(userId, trip?.tripId);
+  const missions = missionListQuery.data ?? [];
 
   async function handleGenerate() {
-    if (!user || !trip) return;
-    await generateMission(user.userId, trip.tripId);
-    await loadMissions(trip);
+    await randomMissionMutation.mutateAsync();
   }
 
   async function handleStart(mission: Mission) {
-    if (!user) return;
-    const startedMission = await startMission(mission.id, user.userId);
-    navigate(`/missions/${startedMission.id}/progress`);
+    const startedMission = await startMissionMutation.mutateAsync(mission.missionId);
+    navigate(`/missions/${startedMission.missionId}/progress`);
   }
 
-  const visibleMissions = tab === "ALL" ? missions : missions.filter((mission) => mission.status === tab);
+  if (currentTripQuery.isLoading) {
+    return <p className="text-sm text-neutral-500">불러오는 중...</p>;
+  }
 
   if (!trip) {
     return (
@@ -65,11 +59,26 @@ export default function MissionListPage() {
 
   return (
     <>
-      <PageHeader title="미션" description={trip.tripName} action={<Button onClick={handleGenerate}>랜덤 뽑기</Button>} />
+      <PageHeader
+        title="미션"
+        description={trip.tripName}
+        action={
+          <Button onClick={handleGenerate} disabled={randomMissionMutation.isPending}>
+            랜덤 뽑기
+          </Button>
+        }
+      />
       <MissionTabs value={tab} onChange={setTab} />
+      {missionListQuery.isError ? (
+        <p className="mt-4 text-sm text-red-600">
+          {missionListQuery.error instanceof Error ? missionListQuery.error.message : "미션을 불러오지 못했습니다."}
+        </p>
+      ) : null}
       <div className="mt-4 space-y-3">
-        {visibleMissions.length > 0 ? (
-          visibleMissions.map((mission) => <MissionCard key={mission.id} mission={mission} onStart={handleStart} />)
+        {missionListQuery.isLoading ? (
+          <p className="text-sm text-neutral-500">미션을 불러오는 중...</p>
+        ) : missions.length > 0 ? (
+          missions.map((mission) => <MissionCard key={mission.missionId} mission={mission} onStart={handleStart} />)
         ) : (
           <EmptyState title="미션이 없습니다" description="랜덤 미션을 뽑아 첫 채집을 시작하세요." />
         )}
