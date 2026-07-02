@@ -1,67 +1,33 @@
 import type {
-  Collection,
   CollectionCreatePayload,
+  CollectionCreateResponse,
+  CollectionDetail,
+  CollectionListItem,
   CollectionStatus,
 } from "@/features/collection/types/collection";
+import { endpoints } from "@/shared/api/endpoints";
+import { fetchClient } from "@/shared/api/fetchClient";
 
-const COLLECTIONS_KEY = "mock-collections";
-const TRIPS_KEY = "mock-trips";
-
-type MockTrip = {
-  id: number;
-  userId: number;
-  region: string;
-};
-
-function readCollections(): Collection[] {
-  const raw = localStorage.getItem(COLLECTIONS_KEY);
-  return raw ? (JSON.parse(raw) as Collection[]) : [];
+export async function createCollection(
+  userId: number,
+  payload: CollectionCreatePayload,
+): Promise<CollectionCreateResponse> {
+  return fetchClient.post<CollectionCreateResponse>(endpoints.collections.create, payload, { userId });
 }
 
-function writeCollections(collections: Collection[]) {
-  localStorage.setItem(COLLECTIONS_KEY, JSON.stringify(collections));
+export async function getCollections(
+  userId: number,
+  {
+    tripId,
+    status,
+  }: {
+    tripId: number;
+    status?: CollectionStatus;
+  },
+): Promise<CollectionListItem[]> {
+  return fetchClient.get<CollectionListItem[]>(endpoints.collections.list(tripId, status), { userId });
 }
 
-function readTrips(): MockTrip[] {
-  const raw = localStorage.getItem(TRIPS_KEY);
-  return raw ? (JSON.parse(raw) as MockTrip[]) : [];
-}
-
-export async function createCollection(payload: CollectionCreatePayload): Promise<Collection> {
-  const trip = readTrips().find((item) => item.id === payload.tripId && item.userId === payload.userId);
-
-  const collection: Collection = {
-    id: Date.now(),
-    userId: payload.userId,
-    tripId: payload.tripId,
-    missionId: payload.missionId,
-    missionTitle: "이름 없는 미션",
-    status: payload.status,
-    memo: payload.memo,
-    shape: payload.shape,
-    imageUrl: null,
-    imageKey: null,
-    localImageId: payload.localImageId,
-    region: trip?.region,
-    createdAt: new Date().toISOString(),
-  };
-
-  writeCollections([...readCollections(), collection]);
-  return collection;
-}
-
-export async function getCollections({
-  tripId,
-  status,
-}: {
-  tripId?: number;
-  status?: CollectionStatus;
-}): Promise<Collection[]> {
-  return readCollections()
-    .filter((collection) => (!tripId || collection.tripId === tripId) && (!status || collection.status === status))
-    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-}
-
-export async function getCollection(collectionId: number): Promise<Collection | null> {
-  return readCollections().find((collection) => collection.id === collectionId) ?? null;
+export async function getCollection(userId: number, collectionId: number): Promise<CollectionDetail> {
+  return fetchClient.get<CollectionDetail>(endpoints.collections.detail(collectionId), { userId });
 }
