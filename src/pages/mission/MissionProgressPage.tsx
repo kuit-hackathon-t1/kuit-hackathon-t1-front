@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
 
+import closeIcon from "@/assets/icons/close.svg";
+import okayIcon from "@/assets/icons/okay.svg";
+import warningIcon from "@/assets/icons/warning.svg";
 import { useAuthStore } from "@/features/auth/stores/authStore";
 import MissionStatusBadge from "@/features/mission/components/MissionStatusBadge";
 import { useMissionDetailQuery } from "@/features/mission/queries/useMissionDetailQuery";
@@ -44,7 +47,7 @@ export default function MissionProgressPage() {
             aria-label="닫기"
             onClick={() => navigate(-1)}
           >
-            ×
+            <img className="h-4 w-4" src={closeIcon} alt="" aria-hidden="true" />
           </button>
         </div>
 
@@ -97,7 +100,7 @@ function ResultConfirm({
   return (
     <div className="mt-8 text-center">
       <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary-soft text-3xl text-primary">
-        {isSuccess ? "✓" : "!"}
+        <img className="h-7 w-7" src={isSuccess ? okayIcon : warningIcon} alt="" aria-hidden="true" />
       </div>
       <h2 className="mt-5 text-2xl font-bold text-black-950">{isSuccess ? "고생했어요!" : "미션에 실패하셨나요?"}</h2>
       <p className="mt-4 text-sm leading-6 text-black-700">

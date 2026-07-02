@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import leftArrowIcon from "@/assets/icons/leftarrow.svg";
+import shuffleIcon from "@/assets/icons/shuffle.svg";
 import MissionDrawLoading from "@/features/mission/components/MissionDrawLoading";
 import MissionDrawResult from "@/features/mission/components/MissionDrawResult";
 import { useRandomMissionMutation } from "@/features/mission/queries/useRandomMissionMutation";
@@ -55,7 +57,8 @@ export default function MissionDrawFlow({ userId, tripId, autoStart = false, onC
   return (
     <div>
       <button className="mb-5 text-sm font-semibold text-primary" type="button" onClick={onClose}>
-        ← 미션 목록
+        <img className="mr-1 inline h-4 w-4 align-[-2px]" src={leftArrowIcon} alt="" aria-hidden="true" />
+        미션 목록
       </button>
 
       {phase === "loading" ? <MissionDrawLoading /> : null}
@@ -75,6 +78,7 @@ export default function MissionDrawFlow({ userId, tripId, autoStart = false, onC
           <p className="text-base font-bold text-black-950">미션을 뽑지 못했어요</p>
           <p className="mt-3 text-sm leading-6 text-danger">{errorMessage}</p>
           <Button className="mt-6 w-full" onClick={startDraw} disabled={randomMissionMutation.isPending}>
+            <img className="h-4 w-4" src={shuffleIcon} alt="" aria-hidden="true" />
             다시 뽑기
           </Button>
         </div>
@@ -84,6 +88,7 @@ export default function MissionDrawFlow({ userId, tripId, autoStart = false, onC
         <div className="rounded-[28px] border border-gray-200 bg-white p-5 text-center shadow-card">
           <p className="text-base font-bold text-black-950">새 미션을 뽑아볼까요?</p>
           <Button className="mt-6 w-full" onClick={startDraw} disabled={randomMissionMutation.isPending || tripId === undefined}>
+            <img className="h-4 w-4" src={shuffleIcon} alt="" aria-hidden="true" />
             미션 뽑기
           </Button>
         </div>
