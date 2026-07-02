@@ -9,42 +9,45 @@ export default function MainTabLayout() {
         <Outlet />
       </main>
 
-      <nav className="fixed bottom-0 left-1/2 z-50 w-full max-w-[430px] -translate-x-1/2 border-t border-neutral-200 bg-white">
+      <nav className="fixed bottom-0 left-1/2 z-50 w-full max-w-[430px] -translate-x-1/2 border-t border-neutral-200 bg-white/95 backdrop-blur">
         <div className="grid h-16 grid-cols-3">
-          <NavLink
-            to="/home"
-            className={({ isActive }) =>
-              cn(
-                "flex items-center justify-center text-sm font-medium",
-                isActive ? "text-emerald-700" : "text-neutral-500",
-              )
-            }
-          >
-            홈
-          </NavLink>
-
           <NavLink
             to="/missions"
             className={({ isActive }) =>
               cn(
-                "flex items-center justify-center text-sm font-medium",
+                "flex flex-col items-center justify-center gap-1 text-xs font-medium",
                 isActive ? "text-emerald-700" : "text-neutral-500",
               )
             }
           >
+            <span aria-hidden="true">◎</span>
             미션
+          </NavLink>
+
+          <NavLink
+            to="/home"
+            className={({ isActive }) =>
+              cn(
+                "flex flex-col items-center justify-center gap-1 text-xs font-medium",
+                isActive ? "text-emerald-700" : "text-neutral-500",
+              )
+            }
+          >
+            <span aria-hidden="true">⌂</span>
+            메인홈
           </NavLink>
 
           <NavLink
             to="/collections"
             className={({ isActive }) =>
               cn(
-                "flex items-center justify-center text-sm font-medium",
+                "flex flex-col items-center justify-center gap-1 text-xs font-medium",
                 isActive ? "text-emerald-700" : "text-neutral-500",
               )
             }
           >
-            기록
+            <span aria-hidden="true">▣</span>
+            채집 기록
           </NavLink>
         </div>
       </nav>
