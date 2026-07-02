@@ -9,7 +9,7 @@ type BeforeTripHomeProps = {
 
 export default function BeforeTripHome({ nickname }: BeforeTripHomeProps) {
   return (
-    <div className="-mx-5 flex min-h-[calc(100dvh-80px)] flex-col bg-[linear-gradient(180deg,#FFFFF7_0%,#FFFFF7_55%,#DDF4D9_100%)] px-5 pb-24">
+   <div className="flex min-h-[calc(100dvh-64px)] flex-col bg-[linear-gradient(...)] px-5 pb-6 pt-8">
       <header className="pt-8">
         <p className="text-xs font-medium leading-5 text-black-950">
           <span className="font-bold">{nickname}님</span>의 청춘도감

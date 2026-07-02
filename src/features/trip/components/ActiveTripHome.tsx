@@ -56,7 +56,7 @@ export default function ActiveTripHome({ trip, userId }: ActiveTripHomeProps) {
   const tripDayLabel = getTripDayLabel(trip.startDate, `${trip.startDate} - ${trip.endDate}`);
 
   return (
-    <div className="flex h-full min-h-0 flex-col gap-3 overflow-hidden bg-[#FFFFF7]">
+    <div className="flex min-h-[calc(100dvh-64px)] flex-col gap-3 overflow-hidden bg-[#FFFFF7] px-5 py-6">
       <header className="flex items-start justify-between gap-4 pt-6">
         <button className="min-w-0 text-left" type="button" onClick={() => setIsTripInfoOpen(true)}>
           <p className="text-xs font-medium leading-4 text-black-950">

@@ -11,19 +11,29 @@ export default function HomePage() {
 
   if (!user) return null;
 
-  return (
-    <div className="-mx-5 -my-6 min-h-dvh bg-[#FFFFF7] px-5 py-6">
-      {currentTripQuery.isLoading ? (
+  if (currentTripQuery.isLoading) {
+    return (
+      <div className="min-h-[calc(100dvh-64px)] bg-[#FFFFF7] px-5 py-6">
         <p className="text-sm text-neutral-500">불러오는 중...</p>
-      ) : currentTripQuery.isError ? (
+      </div>
+    );
+  }
+
+  if (currentTripQuery.isError) {
+    return (
+      <div className="min-h-[calc(100dvh-64px)] bg-[#FFFFF7] px-5 py-6">
         <p className="text-sm text-red-600">
-          {currentTripQuery.error instanceof Error ? currentTripQuery.error.message : "여행 정보를 불러오지 못했습니다."}
+          {currentTripQuery.error instanceof Error
+            ? currentTripQuery.error.message
+            : "여행 정보를 불러오지 못했습니다."}
         </p>
-      ) : trip ? (
-        <ActiveTripHome trip={trip} userId={userId} />
-      ) : (
-        <BeforeTripHome nickname={user.nickname} />
-      )}
-    </div>
+      </div>
+    );
+  }
+
+  return trip ? (
+    <ActiveTripHome trip={trip} userId={userId} />
+  ) : (
+    <BeforeTripHome nickname={user.nickname} />
   );
 }
