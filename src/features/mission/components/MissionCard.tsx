@@ -25,7 +25,7 @@ export default function MissionCard({ mission, onStart }: MissionCardProps) {
       </div>
       <div className="mt-4 flex items-center justify-between text-xs text-neutral-500">
         <span>{mission.category}</span>
-        {mission.difficulty ? <span>{mission.difficulty}</span> : null}
+        <span>{mission.isLocal ? "LOCAL" : "RANDOM"}</span>
       </div>
       {canStart || canOpen ? (
         <div className="mt-4">

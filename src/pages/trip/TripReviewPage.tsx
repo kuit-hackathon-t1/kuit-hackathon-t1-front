@@ -54,18 +54,18 @@ export default function TripReviewPage() {
 
   return (
     <>
-      <PageHeader title="여행 회고" description={review.trip.tripName} />
+      <PageHeader title="여행 회고" description={review.tripName} />
       <div className="space-y-4">
         <Card>
-          <p className="text-sm font-medium text-emerald-700">{review.trip.region}</p>
-          <h1 className="mt-2 text-xl font-bold text-neutral-950">{review.trip.tripName}</h1>
+          <p className="text-sm font-medium text-emerald-700">{review.region}</p>
+          <h1 className="mt-2 text-xl font-bold text-neutral-950">{review.tripName}</h1>
           <p className="mt-1 text-sm text-neutral-500">
-            {review.trip.startDate} - {review.trip.endDate}
+            {review.startDate} - {review.endDate}
           </p>
           <div className="mt-5 grid grid-cols-3 gap-2 text-center">
             <div>
-              <p className="text-2xl font-bold text-neutral-950">{review.totalCollectionCount}</p>
-              <p className="mt-1 text-xs text-neutral-500">전체</p>
+              <p className="text-2xl font-bold text-neutral-950">{review.totalMissionCount}</p>
+              <p className="mt-1 text-xs text-neutral-500">미션</p>
             </div>
             <div>
               <p className="text-2xl font-bold text-emerald-700">{review.successMissionCount}</p>
@@ -76,6 +76,7 @@ export default function TripReviewPage() {
               <p className="mt-1 text-xs text-neutral-500">실패</p>
             </div>
           </div>
+          <p className="mt-4 text-center text-xs text-neutral-500">채집 기록 {review.totalCollectionCount}개</p>
         </Card>
 
         <Tabs items={tabItems} value={tab} onChange={setTab} />

@@ -1,26 +1,49 @@
 export type MissionStatus = "RECOMMENDED" | "ACTIVE" | "SUCCESS" | "FAILURE";
 export type MissionCategory = "OBSERVATION" | "ACTION" | "LOCAL" | "RANDOM";
-export type Difficulty = "EASY" | "NORMAL" | "HARD";
 
-export type MissionListItem = {
+export type MissionDto = {
+  missionId: number;
+  tripId: number;
+  title: string;
+  description: string;
+  missionCategory: MissionCategory;
+  missionStatus: MissionStatus;
+  isLocal: boolean;
+  guides?: string[];
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type MissionListResponseDto = {
+  tripId: number;
+  missions: MissionDto[];
+};
+
+export type Mission = {
   missionId: number;
   tripId: number;
   title: string;
   description: string;
   category: MissionCategory;
-  difficulty?: Difficulty;
   status: MissionStatus;
+  isLocal: boolean;
+  guides?: string[];
   createdAt?: string;
-  startedAt?: string;
+  updatedAt?: string;
 };
 
-export type MissionDetail = MissionListItem & {
-  userId?: number;
-  completedAt?: string;
-  failedAt?: string;
+export type StartMissionResponseDto = {
+  missionId: number;
+  missionStatus: "ACTIVE";
+  updatedAt: string;
 };
 
-export type RandomMissionResponse = MissionDetail;
-export type StartMissionResponse = MissionDetail;
+export type StartMissionResponse = {
+  missionId: number;
+  status: "ACTIVE";
+  updatedAt: string;
+};
 
-export type Mission = MissionDetail;
+export type RandomMissionResponse = Mission;
+export type MissionListItem = Mission;
+export type MissionDetail = Mission;
