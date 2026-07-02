@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, Navigate, useLocation, useSearchParams } from "react-router";
+import { Link, Navigate, useLocation, useNavigate, useSearchParams } from "react-router";
 
 import cameraIcon from "@/assets/icons/camera.svg";
+import leftarrowIcon from "@/assets/icons/leftarrow.svg";
 import { useAuthStore } from "@/features/auth/stores/authStore";
 import ShapeSelector from "@/features/collection/components/ShapeSelector";
 import SpecimenImage from "@/features/collection/components/SpecimenImage";
@@ -10,7 +11,6 @@ import { useCreateCollectionMutation } from "@/features/collection/queries/useCr
 import type { CollectionStatus, CropType } from "@/features/collection/types/collection";
 import type { RecordResultStatus } from "@/features/record/types/record";
 import Button from "@/shared/ui/Button";
-import Card from "@/shared/ui/Card";
 
 type RecordRouteState = {
   tripId?: number;
@@ -36,6 +36,7 @@ function isRecordStatus(value: string | null): value is CollectionStatus {
 
 export default function RecordCreatePage() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const user = useAuthStore((state) => state.currentUser);
   const createCollectionMutation = useCreateCollectionMutation(user?.userId);
@@ -112,20 +113,39 @@ export default function RecordCreatePage() {
   if (step === "complete") {
     return (
       <div className="-mx-5 -my-6 flex min-h-dvh flex-col bg-[#FFFFF7] px-5 py-8 text-center">
-        <h1 className="mt-8 text-3xl font-bold text-black-950">채집 완료!</h1>
-        <p className="mt-3 text-sm leading-6 text-black-700">청춘 조각이 도감에 담겼어요</p>
-        <div
-          className="mt-14 flex h-56 items-center justify-center rounded-[32px] border border-dashed border-primary/30 bg-white text-sm font-semibold text-primary shadow-card"
-          style={{
-            backgroundImage: "url('/images/record/complete-book.png')",
-            backgroundSize: "contain",
-            backgroundRepeat: "no-repeat",
-            backgroundPosition: "center",
-          }}
-        >
-          <span className="rounded-full bg-white/85 px-4 py-2">완성된 도감</span>
+        <div className="mt-16">
+          <div className="mx-auto text-5xl leading-none" aria-hidden="true">
+            🪐
+          </div>
+          <h1 className="mt-3 text-3xl font-bold leading-10 text-black-950">채집 완료!</h1>
+          <p className="mt-1 text-sm leading-6 text-black-700">청춘 조각이 도감에 담겼어요</p>
         </div>
-        <div className="mt-auto grid gap-2 pb-3">
+
+        <div className="relative mt-12 flex h-72 items-center justify-center">
+          <span className="absolute left-0 top-1/2 -translate-y-1/2 text-4xl font-light leading-none text-off" aria-hidden="true">
+            ‹
+          </span>
+          <div className="relative h-full w-full max-w-[360px]">
+            <div
+              className="absolute inset-0 bg-contain bg-center bg-no-repeat"
+              style={{ backgroundImage: "url('/images/home/open-book.png')" }}
+              aria-label="완성된 도감"
+            />
+            <div className="absolute left-1/2 top-1/2 w-20 -translate-x-1/2 -translate-y-1/2">
+              <SpecimenImage
+                imageUrl={previewUrl}
+                cropType={flow.cropType ?? "SNAIL"}
+                status={flow.status}
+                className="border-0 bg-transparent"
+              />
+            </div>
+          </div>
+          <span className="absolute right-0 top-1/2 -translate-y-1/2 text-4xl font-light leading-none text-off" aria-hidden="true">
+            ›
+          </span>
+        </div>
+
+        <div className="mt-auto grid gap-3 pb-3">
           <Link to="/missions">
             <Button className="w-full" size="lg">
               미션 더 뽑기
@@ -145,22 +165,22 @@ export default function RecordCreatePage() {
     <div className="-mx-5 -my-6 min-h-dvh bg-[#FFFFF7] px-5 py-6">
       {step === "capture" ? (
         <section className="flex min-h-[calc(100dvh-48px)] flex-col">
-          <p className="text-sm font-semibold text-primary">{flow.status === "SUCCESS" ? "성공한 순간" : "실패한 순간"}</p>
-          <h1 className="mt-3 text-3xl font-bold text-black-950">청춘 조각 만들기</h1>
+          <RecordHeader title="청춘 조각 만들기" onBack={() => navigate(-1)} />
+          <p className="mt-7 text-xs font-semibold text-primary">{flow.status === "SUCCESS" ? "성공한 순간" : "실패한 순간"}</p>
           <p className="mt-3 text-sm leading-6 text-black-700">사진을 골라 청춘 조각으로 만들어보세요</p>
 
           <label
-            className="mt-8 flex min-h-72 cursor-pointer flex-col items-center justify-center rounded-[32px] border border-dashed border-primary/40 bg-white p-4 text-center shadow-card"
+            className="mt-7 flex min-h-[45dvh] cursor-pointer flex-col items-center justify-center overflow-hidden rounded-[28px] border border-dashed border-gray-300 bg-gray-100 p-4 text-center"
             htmlFor={fileInputId}
           >
             {previewUrl ? (
-              <img className="max-h-64 w-full rounded-[24px] object-cover" src={previewUrl} alt="선택한 사진 미리보기" />
+              <img className="h-full max-h-[45dvh] w-full rounded-[22px] object-cover" src={previewUrl} alt="선택한 사진 미리보기" />
             ) : (
               <>
-                <span className="flex h-16 w-16 items-center justify-center rounded-full bg-primary-soft text-3xl text-primary" aria-hidden="true">
-                  <img className="h-7 w-7" src={cameraIcon} alt="" />
+                <span className="flex h-16 w-16 items-center justify-center text-3xl text-gray-500" aria-hidden="true">
+                  <img className="h-14 w-14 opacity-60" src={cameraIcon} alt="" />
                 </span>
-                <span className="mt-4 text-base font-bold text-black-950">사진 추가하기</span>
+                <span className="mt-3 text-lg font-medium text-gray-500">사진 추가하기</span>
               </>
             )}
           </label>
@@ -173,34 +193,44 @@ export default function RecordCreatePage() {
             onChange={(event) => updateImageFile(event.target.files?.[0] ?? null)}
           />
 
-          <Card className="mt-auto rounded-[28px] border-gray-200">
-            <p className="text-base font-bold text-black-950">어떤 모양으로 채집할까요?</p>
-            <p className="mt-2 text-xs leading-5 text-gray-600">청춘 조각으로 남길 표본 모양을 골라주세요.</p>
-            <div className="mt-4">
+          <div className="mt-auto rounded-[16px] bg-[#9D9F9C] p-3">
+            <p className="text-xs font-medium text-white">어떤 모양으로 채집할까요?</p>
+            <div className="mt-3">
               <ShapeSelector value={flow.cropType} onChange={(cropType) => updateFlow({ cropType })} />
             </div>
-            <Button className="mt-5 w-full" size="lg" disabled={!flow.imageFile || !flow.cropType} onClick={() => setStep("memo")}>
-              채집하기
-            </Button>
-          </Card>
+          </div>
+          <Button
+            className="mt-5 w-full disabled:border-transparent disabled:bg-[#9D9F9C] disabled:text-white"
+            size="lg"
+            disabled={!flow.imageFile || !flow.cropType}
+            onClick={() => setStep("memo")}
+          >
+            채집하기
+          </Button>
         </section>
       ) : null}
 
       {step === "memo" ? (
         <section className="flex min-h-[calc(100dvh-48px)] flex-col">
-          <h1 className="mt-4 text-3xl font-bold text-black-950">한줄평 남기기</h1>
-          <p className="mt-3 text-sm leading-6 text-black-700">이 순간을 한 줄로 남겨주세요</p>
-          <div className="mt-8">
-            <SpecimenImage imageUrl={previewUrl} cropType={flow.cropType ?? "SNAIL"} status={flow.status} />
+          <RecordHeader title="한줄평 남기기" onBack={() => setStep("capture")} />
+          <p className="mt-7 text-sm leading-6 text-black-700">이 순간을 한 줄로 남겨주세요</p>
+          <div className="mt-8 flex min-h-[360px] items-center justify-center rounded-[28px] border border-gray-200 bg-gray-100 p-6">
+            <SpecimenImage
+              imageUrl={previewUrl}
+              cropType={flow.cropType ?? "SNAIL"}
+              status={flow.status}
+              className="w-64 border-0 bg-transparent"
+              imageClassName="object-cover"
+            />
           </div>
           <textarea
-            className="mt-6 min-h-32 w-full rounded-[24px] border border-gray-200 bg-white p-4 text-base text-black-950 shadow-card outline-none placeholder:text-gray-400 focus:border-primary"
+            className="mt-7 min-h-36 w-full resize-none rounded-[18px] border border-gray-100 bg-white p-5 text-base text-black-950 shadow-card outline-none placeholder:text-gray-400 focus:border-primary"
             value={flow.memo}
             onChange={(event) => updateFlow({ memo: event.target.value })}
             placeholder="이 순간을 한 줄로 남겨주세요"
           />
           {errorMessage ? <p className="mt-4 text-sm text-danger">{errorMessage}</p> : null}
-          <div className="mt-auto grid grid-cols-2 gap-2 pb-3">
+          <div className="mt-auto grid grid-cols-[0.8fr_1.2fr] gap-3 pb-3 pt-6">
             <Button type="button" variant="grayOutline" onClick={() => setStep("capture")}>
               이전
             </Button>
@@ -211,5 +241,16 @@ export default function RecordCreatePage() {
         </section>
       ) : null}
     </div>
+  );
+}
+
+function RecordHeader({ title, onBack }: { title: string; onBack: () => void }) {
+  return (
+    <header className="relative flex h-14 items-center justify-center">
+      <button className="absolute left-0 flex h-10 w-10 items-center justify-center" type="button" aria-label="이전" onClick={onBack}>
+        <img className="h-5 w-5 opacity-80" src={leftarrowIcon} alt="" aria-hidden="true" />
+      </button>
+      <h1 className="px-12 text-center text-2xl font-bold leading-8 text-black-950">{title}</h1>
+    </header>
   );
 }
