@@ -1,4 +1,4 @@
-import SpecimenTile from "@/features/collection/components/SpecimenTile";
+import SpecimenLayer from "@/features/collection/components/SpecimenLayer";
 import type { CollectionListItem } from "@/features/collection/types/collection";
 
 type SpecimenBookProps = {
@@ -18,16 +18,7 @@ export default function SpecimenBook({ collections, onSelectCollection }: Specim
       }}
     >
       {collections.length > 0 ? (
-        collections
-          .slice(0, 12)
-          .map((collection, index) => (
-            <SpecimenTile
-              key={collection.collectionId}
-              collection={collection}
-              index={index}
-              onClick={() => onSelectCollection(collection.collectionId)}
-            />
-          ))
+        <SpecimenLayer collections={collections} onSelectCollection={onSelectCollection} />
       ) : (
         <span className="rounded-full bg-white/90 px-4 py-2">아직 채집된 조각이 없어요</span>
       )}
