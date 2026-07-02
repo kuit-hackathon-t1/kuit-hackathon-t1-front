@@ -10,7 +10,7 @@ type MissionCardProps = {
 };
 
 export default function MissionCard({ mission, onStart, onOpen }: MissionCardProps) {
-  const canStart = mission.status === "RECOMMENDED";
+  const canStart = mission.status === "DRAWN";
   const canOpen = mission.status === "ACTIVE" || mission.status === "SUCCESS" || mission.status === "FAILURE";
   const content = (
     <>

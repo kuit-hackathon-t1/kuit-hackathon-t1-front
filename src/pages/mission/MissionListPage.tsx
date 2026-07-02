@@ -9,7 +9,6 @@ import { useAuthStore } from "@/features/auth/stores/authStore";
 import MissionDrawFlow from "@/features/mission/components/MissionDrawFlow";
 import MissionTabs, { type MissionTab } from "@/features/mission/components/MissionTabs";
 import { useMissionListQuery } from "@/features/mission/queries/useMissionListQuery";
-import { useStartMissionMutation } from "@/features/mission/queries/useStartMissionMutation";
 import type { Mission, MissionStatus } from "@/features/mission/types/mission";
 import { useCurrentTripQuery } from "@/features/trip/queries/useCurrentTripQuery";
 import Button from "@/shared/ui/Button";
@@ -33,14 +32,8 @@ export default function MissionListPage() {
   const trip = currentTripQuery.data?.hasActiveTrip ? currentTripQuery.data.trip : null;
   const status = toMissionStatus(tab);
   const missionListQuery = useMissionListQuery(userId, trip?.tripId, status);
-  const startMissionMutation = useStartMissionMutation(userId, trip?.tripId);
-  const missions = missionListQuery.data ?? [];
+  const missions = (missionListQuery.data ?? []).filter((mission) => mission.status !== "DRAWN");
   const isDrawMode = searchParams.get("draw") === "1";
-
-  async function handleStart(mission: Mission) {
-    await startMissionMutation.mutateAsync(mission.missionId);
-    navigate("/home", { replace: true });
-  }
 
   function closeMissionDialog() {
     setSelectedMission(null);
@@ -92,7 +85,7 @@ export default function MissionListPage() {
         />
       ) : (
         <>
-          <PageHeader title="미션" description={trip.tripName} action={null} />
+          <PageHeader title="미션 모아보기" />
           <MissionTabs value={tab} onChange={setTab} />
           {missionListQuery.isError ? (
             <p className="mt-4 text-sm text-red-600">
@@ -103,7 +96,7 @@ export default function MissionListPage() {
             {missionListQuery.isLoading ? (
               <p className="text-sm text-neutral-500">미션을 불러오는 중...</p>
             ) : missions.length > 0 ? (
-              <MissionStack missions={missions} onStart={handleStart} onOpen={setSelectedMission} />
+              <MissionStack missions={missions} onOpen={setSelectedMission} />
             ) : (
               <EmptyState title="미션이 없습니다" description="랜덤 미션을 뽑아 첫 채집을 시작하세요." />
             )}
@@ -138,17 +131,15 @@ export default function MissionListPage() {
 
 function MissionStack({
   missions,
-  onStart,
   onOpen,
 }: {
   missions: Mission[];
-  onStart: (mission: Mission) => void;
   onOpen: (mission: Mission) => void;
 }) {
   return (
     <div className="space-y-0 pb-36 pt-2">
       {missions.map((mission, index) => (
-        <MissionStackCard key={mission.missionId} mission={mission} index={index} onStart={onStart} onOpen={onOpen} />
+        <MissionStackCard key={mission.missionId} mission={mission} index={index} onOpen={onOpen} />
       ))}
     </div>
   );
@@ -157,12 +148,10 @@ function MissionStack({
 function MissionStackCard({
   mission,
   index,
-  onStart,
   onOpen,
 }: {
   mission: Mission;
   index: number;
-  onStart: (mission: Mission) => void;
   onOpen: (mission: Mission) => void;
 }) {
   const interactive = mission.status === "ACTIVE" || mission.status === "SUCCESS" || mission.status === "FAILURE";
@@ -180,18 +169,11 @@ function MissionStackCard({
             ? "진행 중"
             : mission.status === "SUCCESS"
               ? "성공"
-              : mission.status === "FAILURE"
-                ? "실패"
-                : "추천"}
+              : "실패"}
         </span>
       </div>
       <h2 className="mt-6 text-3xl font-bold leading-10 text-black-700">{mission.title}</h2>
       <p className="mt-8 text-base leading-7 text-black-950">{mission.description}</p>
-      {mission.status === "RECOMMENDED" ? (
-        <Button className="mt-5 w-full" onClick={() => onStart(mission)}>
-          미션 시작
-        </Button>
-      ) : null}
     </Card>
   );
 

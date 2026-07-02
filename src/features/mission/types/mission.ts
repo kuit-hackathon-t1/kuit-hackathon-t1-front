@@ -1,4 +1,4 @@
-export type MissionStatus = "RECOMMENDED" | "ACTIVE" | "SUCCESS" | "FAILURE";
+export type MissionStatus = "DRAWN" | "ACTIVE" | "SUCCESS" | "FAILURE";
 export type MissionCategory = "OBSERVATION" | "ACTION" | "LOCAL" | "RANDOM";
 
 export type MissionDto = {
