@@ -1,20 +1,22 @@
-import { NavLink, Outlet } from "react-router";
+import { Outlet, NavLink } from "react-router";
 
 import { cn } from "@/shared/lib/cn";
 
 export default function MainTabLayout() {
   return (
-    <div className="mx-auto min-h-screen max-w-md bg-stone-50 px-4 py-6 pb-24">
-      <Outlet />
+    <div className="relative min-h-dvh pb-20">
+      <main className="px-5 py-6">
+        <Outlet />
+      </main>
 
-      <nav className="fixed bottom-0 left-1/2 w-full max-w-md -translate-x-1/2 border-t border-neutral-200 bg-white/95 backdrop-blur">
-        <div className="grid grid-cols-3">
+      <nav className="fixed bottom-0 left-1/2 z-50 w-full max-w-[430px] -translate-x-1/2 border-t border-neutral-200 bg-white">
+        <div className="grid h-16 grid-cols-3">
           <NavLink
             to="/home"
             className={({ isActive }) =>
               cn(
-                "py-4 text-center text-sm font-medium text-neutral-500",
-                isActive && "text-emerald-700",
+                "flex items-center justify-center text-sm font-medium",
+                isActive ? "text-emerald-700" : "text-neutral-500",
               )
             }
           >
@@ -25,8 +27,8 @@ export default function MainTabLayout() {
             to="/missions"
             className={({ isActive }) =>
               cn(
-                "py-4 text-center text-sm font-medium text-neutral-500",
-                isActive && "text-emerald-700",
+                "flex items-center justify-center text-sm font-medium",
+                isActive ? "text-emerald-700" : "text-neutral-500",
               )
             }
           >
@@ -37,8 +39,8 @@ export default function MainTabLayout() {
             to="/collections"
             className={({ isActive }) =>
               cn(
-                "py-4 text-center text-sm font-medium text-neutral-500",
-                isActive && "text-emerald-700",
+                "flex items-center justify-center text-sm font-medium",
+                isActive ? "text-emerald-700" : "text-neutral-500",
               )
             }
           >
