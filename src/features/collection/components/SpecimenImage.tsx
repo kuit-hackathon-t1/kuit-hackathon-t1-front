@@ -1,3 +1,5 @@
+import type { CSSProperties } from "react";
+
 import type { CollectionStatus, CropType } from "@/features/collection/types/collection";
 import { cn } from "@/shared/lib/cn";
 
@@ -8,13 +10,19 @@ type SpecimenImageProps = {
   alt?: string;
 };
 
-const shapeClass: Record<CropType, string> = {
-  BUTTERFLY: "[clip-path:polygon(50%_12%,62%_31%,94%_14%,78%_50%,96%_86%,60%_70%,50%_90%,40%_70%,4%_86%,22%_50%,6%_14%,38%_31%)]",
-  BEETLE: "[clip-path:ellipse(38%_47%_at_50%_52%)]",
-  DRAGONFLY: "[clip-path:polygon(50%_5%,58%_37%,94%_20%,66%_50%,94%_80%,58%_63%,50%_95%,42%_63%,6%_80%,34%_50%,6%_20%,42%_37%)]",
+const maskUrlByCropType: Record<CropType, string> = {
+  SNAIL: "/images/specimen/snail-mask.svg",
+  BEETLE: "/images/specimen/beetle-mask.svg",
+  BUTTERFLY: "/images/specimen/butterfly-mask.svg",
+  MOTH: "/images/specimen/moth-mask.svg",
 };
 
 export default function SpecimenImage({ imageUrl, cropType, status, alt = "채집 이미지" }: SpecimenImageProps) {
+  const maskStyle: CSSProperties = {
+    WebkitMask: `url(${maskUrlByCropType[cropType]}) center / contain no-repeat`,
+    mask: `url(${maskUrlByCropType[cropType]}) center / contain no-repeat`,
+  };
+
   return (
     <div
       className={cn(
@@ -23,7 +31,7 @@ export default function SpecimenImage({ imageUrl, cropType, status, alt = "채�
       )}
     >
       {imageUrl ? (
-        <img className={cn("h-full w-full object-cover", shapeClass[cropType])} src={imageUrl} alt={alt} />
+        <img className="h-full w-full object-cover" src={imageUrl} alt={alt} style={maskStyle} />
       ) : (
         <div className="flex h-full items-center justify-center text-sm text-neutral-400">이미지 없음</div>
       )}
