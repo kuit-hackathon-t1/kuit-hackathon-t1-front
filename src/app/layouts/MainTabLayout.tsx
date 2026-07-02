@@ -13,8 +13,8 @@ const tabs = [
 
 export default function MainTabLayout() {
   return (
-    <div className="relative min-h-dvh pb-20">
-      <main className="px-5 py-6">
+    <div className="relative h-dvh overflow-hidden bg-white">
+  <main className="h-full overflow-y-auto pb-16">
         <Outlet />
       </main>
 

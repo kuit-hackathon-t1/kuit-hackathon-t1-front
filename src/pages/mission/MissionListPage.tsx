@@ -81,7 +81,7 @@ export default function MissionListPage() {
   }
 
   return (
-    <div className="-mx-5 -my-6 min-h-dvh bg-[#FFFFF7] px-5 py-6">
+   <div className="min-h-[calc(100dvh-64px)] bg-[#FFFFF7] px-5 py-6">
       {isDrawMode ? (
         <MissionDrawFlow
           userId={userId}

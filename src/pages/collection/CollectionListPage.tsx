@@ -73,7 +73,7 @@ export default function CollectionListPage() {
   }
 
   return (
-    <div className="-mx-5 -my-6 min-h-dvh bg-[#FFFFF7] pb-24">
+   <div className="min-h-[calc(100dvh-64px)] bg-[#FFFFF7] px-5 py-6 pb-24">
       <header className="relative flex h-22 items-center justify-center border-b border-gray-200 bg-white px-5">
         <h1 className="text-xl font-bold text-black-950">채집 기록</h1>
         <button className="absolute right-5 top-1/2 h-9 w-9 -translate-y-1/2 rounded-full bg-gray-50 p-2" type="button" aria-label="기록 편집">
