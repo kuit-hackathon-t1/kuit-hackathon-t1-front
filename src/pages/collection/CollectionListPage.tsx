@@ -73,30 +73,31 @@ export default function CollectionListPage() {
   }
 
   return (
-   <div className="min-h-[calc(100dvh-64px)] bg-[#FFFFF7] px-5 py-6 pb-24">
-      <header className="relative flex h-22 items-center justify-center border-b border-gray-200 bg-white px-5">
-        <h1 className="text-xl font-bold text-black-950">채집 기록</h1>
-        <button className="absolute right-5 top-1/2 h-9 w-9 -translate-y-1/2 rounded-full bg-gray-50 p-2" type="button" aria-label="기록 편집">
+   <div className="min-h-[calc(100dvh-64px)] bg-[#FFFFF7] px-5">
+      <header className="-mx-5 relative flex h-22 items-center justify-center border-b border-gray-200 bg-[#FFFFF7] px-5">
+        <h1 className="text-subtitle-20 text-black-800">채집 기록</h1>
+        <button className="absolute right-5 top-1/2 h-8 w-8 -translate-y-1/2 p-2" type="button" aria-label="기록 편집">
           <img className="h-full w-full" src={reviewIcon} alt="" aria-hidden="true" />
         </button>
       </header>
 
-      <section className="bg-gray-200 px-4 py-8">
-        <div className="flex gap-2 overflow-x-auto pb-1">
-          {trips.map((trip) => (
+      <section className="-mx-5 h-[139px] bg-gray-200 px-4">
+        <div className="flex h-full items-end gap-1.5 overflow-x-auto">
+          {trips.map((trip, index) => (
             <button
               key={trip.tripId}
               className={cn(
-                "flex h-30 w-16 shrink-0 flex-col items-center justify-between rounded-md border px-2 py-3 text-[11px] font-semibold shadow-sm",
+                "flex w-8 shrink-0 flex-col items-center justify-center rounded-t-[4px] border px-1 py-2 text-[10px] font-semibold text-white shadow-[2px_1px_5px_rgba(0,0,0,0.25)] transition-[height,background-color]",
                 effectiveSelectedTripId === trip.tripId
-                  ? "border-primary bg-primary-soft text-primary"
-                  : "border-gray-300 bg-[#FFFFF7] text-black-700",
+                  ? "h-[104px] border-[#482317] bg-[#5A2E20]"
+                  : "h-[88px] border-[#603524] bg-[#754532]",
+                index % 2 === 0 && effectiveSelectedTripId !== trip.tripId ? "h-[96px]" : "",
               )}
               type="button"
               onClick={() => setSelectedTripId(trip.tripId)}
             >
               <span className="line-clamp-4 [writing-mode:vertical-rl]">{trip.tripName}</span>
-              <span className="rounded-full bg-white/80 px-2 py-0.5 text-[10px]">
+              <span className="sr-only">
                 {trip.status === "ACTIVE" ? "진행" : "종료"}
               </span>
             </button>
@@ -104,15 +105,11 @@ export default function CollectionListPage() {
         </div>
       </section>
 
-      <section className="px-5 py-8">
-        <h2 className="text-2xl font-bold text-black-950">{selectedTrip.tripName}</h2>
-        <div className="mt-4 flex flex-wrap items-center gap-2 text-sm text-black-700">
-          <span>{selectedTrip.region}</span>
-          <span>·</span>
-          <span>
-            {selectedTrip.startDate} - {selectedTrip.endDate}
-          </span>
-          <span className="rounded-full bg-gray-200 px-3 py-1 text-xs font-semibold text-black-700">
+      <section className="pt-8">
+        <h2 className="font-jandari text-subtitle-26 text-black-950">{selectedTrip.tripName}</h2>
+        <div className="mt-1 flex flex-wrap items-center gap-2 text-body-12 text-black-700">
+          <span>{selectedTrip.region} · {selectedTrip.startDate}-{selectedTrip.endDate}</span>
+          <span className="rounded-full bg-gray-200 px-2.5 py-1 text-[10px] font-semibold text-black-700">
             {companionLabels[selectedTrip.companionType]}
           </span>
         </div>
@@ -127,7 +124,7 @@ export default function CollectionListPage() {
 
         {collectionsQuery.isLoading ? <p className="mt-4 text-sm text-gray-600">채집 기록을 불러오는 중...</p> : null}
 
-        <p className="mt-10 text-sm leading-7 text-black-700">
+        <p className="mt-8 text-body-12 leading-5 text-black-700">
           이번 여행에서 <strong className="font-bold text-primary">{stats.totalMissionCount}개</strong>의 미션을 시도했어요.
           <br />
           <strong className="font-bold text-primary">{stats.successMissionCount}개</strong>는 완료했고,{" "}
@@ -135,7 +132,6 @@ export default function CollectionListPage() {
           <br />
           하지만 놓친 장면까지 모두 청춘도감에 남아 있어요.
         </p>
-        <p className="mt-4 text-xs text-gray-500">채집 기록 {stats.totalCollectionCount}개</p>
       </section>
 
       {selectedCollectionId ? (

@@ -162,10 +162,10 @@ function MissionStackCard({
   const interactive = mission.status === "ACTIVE" || mission.status === "SUCCESS" || mission.status === "FAILURE";
   const categoryMeta = getMissionCategoryMeta(mission.category);
   const rotation = index % 2 === 0 ? "-rotate-[4deg]" : "rotate-[5deg]";
-  const offset = index === 0 ? "" : "-mt-8";
+  const offset = index === 0 ? "" : "-mt-2";
 
   const content = (
-    <Card className={`relative rounded-[22px] border-gray-200 bg-white p-5 shadow-card ${rotation}`}>
+    <Card className={`relative rounded-[20px] border-gray-200 bg-white p-4 shadow-card ${rotation}`}>
       <div className="flex items-start justify-between gap-3">
         <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${categoryMeta.className}`}>
           {categoryMeta.label}
@@ -178,13 +178,13 @@ function MissionStackCard({
               : "실패"}
         </span>
       </div>
-      <h2 className="mt-6 text-3xl font-bold leading-10 text-black-700">{mission.title}</h2>
-      <p className="mt-8 text-base leading-7 text-black-950">{mission.description}</p>
+      <h2 className="mt-4 text-2xl font-bold leading-8 text-black-700">{mission.title}</h2>
+      <p className="mt-6 text-sm leading-6 text-black-950">{mission.description}</p>
     </Card>
   );
 
   return (
-    <div className={`mx-auto w-[88%] max-w-[340px] ${offset}`}>
+    <div className={`mx-auto w-[84%] max-w-[320px] ${offset}`}>
       {interactive ? (
         <button className="block w-full text-left" type="button" onClick={() => onOpen(mission)}>
           {content}

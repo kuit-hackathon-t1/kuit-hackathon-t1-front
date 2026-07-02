@@ -19,6 +19,7 @@ export default function MissionTabs({ value, onChange }: { value: MissionTab; on
           type="button"
           size="sm"
           variant={value === item.value ? "greenOutline" : "grayOutline"}
+          className={value === item.value ? "shadow-[0_2px_6px_rgba(0,0,0,0.10)]" : undefined}
           onClick={() => onChange(item.value)}
         >
           {item.label}
