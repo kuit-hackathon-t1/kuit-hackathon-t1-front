@@ -5,6 +5,9 @@ import { useAuthStore } from "@/features/auth/stores/authStore";
 import { useMissionListQuery } from "@/features/mission/queries/useMissionListQuery";
 import type { Mission } from "@/features/mission/types/mission";
 import type { RecordResultStatus } from "@/features/record/types/record";
+import TripEndConfirmDialog from "@/features/trip/components/TripEndConfirmDialog";
+import TripInfoDialog from "@/features/trip/components/TripInfoDialog";
+import { useEndTripMutation } from "@/features/trip/queries/useEndTripMutation";
 import type { Trip } from "@/features/trip/types/trip";
 import Button from "@/shared/ui/Button";
 import Card from "@/shared/ui/Card";
@@ -18,9 +21,12 @@ export default function ActiveTripHome({ trip, userId }: ActiveTripHomeProps) {
   const navigate = useNavigate();
   const nickname = useAuthStore((state) => state.currentUser?.nickname ?? "채집가");
   const activeMissionQuery = useMissionListQuery(userId, trip.tripId, "ACTIVE");
+  const endTripMutation = useEndTripMutation(userId);
   const activeMissions = activeMissionQuery.data ?? [];
   const [selectedMission, setSelectedMission] = useState<Mission | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<RecordResultStatus | null>(null);
+  const [isTripInfoOpen, setIsTripInfoOpen] = useState(false);
+  const [isTripEndConfirmOpen, setIsTripEndConfirmOpen] = useState(false);
 
   function closeMissionDialog() {
     setSelectedMission(null);
@@ -38,6 +44,11 @@ export default function ActiveTripHome({ trip, userId }: ActiveTripHomeProps) {
     });
   }
 
+  async function confirmEndTrip() {
+    await endTripMutation.mutateAsync(trip.tripId);
+    navigate(`/trips/${trip.tripId}/review`, { replace: true });
+  }
+
   return (
     <div className="space-y-5">
       <header className="pt-2">
@@ -45,7 +56,11 @@ export default function ActiveTripHome({ trip, userId }: ActiveTripHomeProps) {
         <h1 className="mt-1 text-2xl font-bold text-black-950">{nickname}님의 청춘도감</h1>
       </header>
 
-      <section className="rounded-[32px] border border-primary/20 bg-[#FFFFF7] p-5 shadow-card">
+      <button
+        className="block w-full rounded-[32px] border border-primary/20 bg-[#FFFFF7] p-5 text-left shadow-card"
+        type="button"
+        onClick={() => setIsTripInfoOpen(true)}
+      >
         <div className="flex items-start justify-between gap-3">
           <div>
             <h2 className="text-xl font-bold text-black-950">{trip.tripName}</h2>
@@ -70,7 +85,7 @@ export default function ActiveTripHome({ trip, userId }: ActiveTripHomeProps) {
         >
           <span className="rounded-full bg-white/85 px-4 py-2">펼쳐진 도감</span>
         </div>
-      </section>
+      </button>
 
       <Card className="rounded-[28px] border-gray-200">
         <div className="flex items-center justify-between">
@@ -118,6 +133,21 @@ export default function ActiveTripHome({ trip, userId }: ActiveTripHomeProps) {
           onRecord={() => selectedStatus && moveToRecord(selectedStatus)}
         />
       ) : null}
+      <TripInfoDialog
+        trip={trip}
+        open={isTripInfoOpen}
+        onClose={() => setIsTripInfoOpen(false)}
+        onRequestEnd={() => {
+          setIsTripInfoOpen(false);
+          setIsTripEndConfirmOpen(true);
+        }}
+      />
+      <TripEndConfirmDialog
+        open={isTripEndConfirmOpen}
+        isPending={endTripMutation.isPending}
+        onClose={() => setIsTripEndConfirmOpen(false)}
+        onConfirm={confirmEndTrip}
+      />
     </div>
   );
 }

@@ -19,6 +19,7 @@ export function useCreateCollectionMutation(userId?: number) {
       void queryClient.invalidateQueries({ queryKey: missionKeys.list(payload.tripId) });
       void queryClient.invalidateQueries({ queryKey: missionKeys.detail(payload.missionId) });
       void queryClient.invalidateQueries({ queryKey: tripKeys.current(userId) });
+      void queryClient.invalidateQueries({ queryKey: tripKeys.list(userId) });
       void queryClient.invalidateQueries({ queryKey: tripKeys.review(userId, payload.tripId) });
     },
   });

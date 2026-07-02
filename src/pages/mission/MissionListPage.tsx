@@ -1,19 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useQueries } from "@tanstack/react-query";
+import { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router";
 
 import { useAuthStore } from "@/features/auth/stores/authStore";
-import SpecimenImage from "@/features/collection/components/SpecimenImage";
-import { getCollection } from "@/features/collection/api/collectionApi";
-import { getLocalImage } from "@/features/collection/lib/localImageStorage";
-import { collectionKeys } from "@/features/collection/queries/collectionKeys";
-import { useCollectionsQuery } from "@/features/collection/queries/useCollectionsQuery";
-import type { CollectionDetail } from "@/features/collection/types/collection";
-import MissionDrawLoading from "@/features/mission/components/MissionDrawLoading";
-import MissionDrawResult from "@/features/mission/components/MissionDrawResult";
+import MissionDrawFlow from "@/features/mission/components/MissionDrawFlow";
 import MissionTabs, { type MissionTab } from "@/features/mission/components/MissionTabs";
 import { useMissionListQuery } from "@/features/mission/queries/useMissionListQuery";
-import { useRandomMissionMutation } from "@/features/mission/queries/useRandomMissionMutation";
 import { useStartMissionMutation } from "@/features/mission/queries/useStartMissionMutation";
 import type { Mission, MissionStatus } from "@/features/mission/types/mission";
 import { useCurrentTripQuery } from "@/features/trip/queries/useCurrentTripQuery";
@@ -32,43 +23,15 @@ export default function MissionListPage() {
   const user = useAuthStore((state) => state.currentUser);
   const userId = user?.userId;
   const [tab, setTab] = useState<MissionTab>("ALL");
-  const [drawMode, setDrawMode] = useState(searchParams.get("draw") === "1");
-  const autoDrawStartedRef = useRef(false);
-  const [pickedMission, setPickedMission] = useState<Mission | null>(null);
-  const [drawErrorMessage, setDrawErrorMessage] = useState<string | null>(null);
   const [selectedMission, setSelectedMission] = useState<Mission | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<"SUCCESS" | "FAILURE" | null>(null);
   const currentTripQuery = useCurrentTripQuery(userId);
   const trip = currentTripQuery.data?.hasActiveTrip ? currentTripQuery.data.trip : null;
   const status = toMissionStatus(tab);
   const missionListQuery = useMissionListQuery(userId, trip?.tripId, status);
-  const randomMissionMutation = useRandomMissionMutation(userId, trip?.tripId);
   const startMissionMutation = useStartMissionMutation(userId, trip?.tripId);
   const missions = missionListQuery.data ?? [];
-
-  const handleGenerate = useCallback(async () => {
-    setDrawMode(true);
-    setSearchParams({ draw: "1" }, { replace: true });
-    setPickedMission(null);
-    setDrawErrorMessage(null);
-    try {
-      const mission = await randomMissionMutation.mutateAsync();
-      setPickedMission(mission);
-    } catch (error) {
-      setDrawErrorMessage(error instanceof Error ? error.message : "미션을 뽑지 못했습니다.");
-    }
-  }, [randomMissionMutation, setSearchParams]);
-
-  useEffect(() => {
-    if (!trip || !drawMode || searchParams.get("draw") !== "1" || autoDrawStartedRef.current) return;
-    autoDrawStartedRef.current = true;
-    randomMissionMutation.mutate(undefined, {
-      onSuccess: (mission) => setPickedMission(mission),
-      onError: (error) => {
-        setDrawErrorMessage(error instanceof Error ? error.message : "미션을 뽑지 못했습니다.");
-      },
-    });
-  }, [drawMode, randomMissionMutation, searchParams, trip]);
+  const isDrawMode = searchParams.get("draw") === "1";
 
   async function handleStart(mission: Mission) {
     await startMissionMutation.mutateAsync(mission.missionId);
@@ -80,10 +43,11 @@ export default function MissionListPage() {
     setSelectedStatus(null);
   }
 
+  function openDrawMode() {
+    setSearchParams({ draw: "1" }, { replace: true });
+  }
+
   function closeDrawMode() {
-    setDrawMode(false);
-    setPickedMission(null);
-    setDrawErrorMessage(null);
     setSearchParams({}, { replace: true });
   }
 
@@ -114,76 +78,53 @@ export default function MissionListPage() {
 
   return (
     <div className="-mx-5 -my-6 min-h-dvh bg-[#FFFFF7] px-5 py-6">
-      {drawMode ? (
-        <div>
-          <button className="mb-5 text-sm font-semibold text-primary" type="button" onClick={closeDrawMode}>
-            ← 미션 목록
-          </button>
-          {drawErrorMessage ? (
-            <div className="rounded-[28px] border border-gray-200 bg-white p-5 text-center shadow-card">
-              <p className="text-base font-bold text-black-950">미션을 뽑지 못했어요</p>
-              <p className="mt-3 text-sm leading-6 text-danger">{drawErrorMessage}</p>
-              <Button className="mt-6 w-full" onClick={handleGenerate}>
-                다시 뽑기
-              </Button>
-            </div>
-          ) : randomMissionMutation.isPending || !pickedMission ? (
-            <MissionDrawLoading />
-          ) : (
-            <MissionDrawResult
-              mission={pickedMission}
-              onRetry={handleGenerate}
-              onStart={() => handleStart(pickedMission)}
-              retryDisabled={randomMissionMutation.isPending}
-              startDisabled={startMissionMutation.isPending}
-            />
-          )}
-        </div>
+      {isDrawMode ? (
+        <MissionDrawFlow
+          userId={userId}
+          tripId={trip.tripId}
+          autoStart
+          onClose={closeDrawMode}
+          onStarted={() => navigate("/home", { replace: true })}
+        />
       ) : (
         <>
-      <PageHeader
-        title="미션"
-        description={trip.tripName}
-        action={
-          null
-        }
-      />
-      <MissionTabs value={tab} onChange={setTab} />
-      {missionListQuery.isError ? (
-        <p className="mt-4 text-sm text-red-600">
-          {missionListQuery.error instanceof Error ? missionListQuery.error.message : "미션을 불러오지 못했습니다."}
-        </p>
-      ) : null}
-      <div className="mt-4 space-y-3">
-        {missionListQuery.isLoading ? (
-          <p className="text-sm text-neutral-500">미션을 불러오는 중...</p>
-        ) : missions.length > 0 ? (
-          <MissionStack missions={missions} onStart={handleStart} onOpen={setSelectedMission} />
-        ) : (
-          <EmptyState title="미션이 없습니다" description="랜덤 미션을 뽑아 첫 채집을 시작하세요." />
-        )}
-      </div>
-      <div className="pointer-events-none fixed inset-x-0 bottom-16 z-40 mx-auto w-full max-w-[430px] px-5 pb-4">
-        <Button
-          className="pointer-events-auto w-full border-2 border-primary bg-white text-primary hover:bg-primary-soft"
-          size="lg"
-          onClick={handleGenerate}
-          disabled={randomMissionMutation.isPending}
-        >
-          랜덤 미션 뽑기
-        </Button>
-      </div>
+          <PageHeader title="미션" description={trip.tripName} action={null} />
+          <MissionTabs value={tab} onChange={setTab} />
+          {missionListQuery.isError ? (
+            <p className="mt-4 text-sm text-red-600">
+              {missionListQuery.error instanceof Error ? missionListQuery.error.message : "미션을 불러오지 못했습니다."}
+            </p>
+          ) : null}
+          <div className="mt-4 space-y-3">
+            {missionListQuery.isLoading ? (
+              <p className="text-sm text-neutral-500">미션을 불러오는 중...</p>
+            ) : missions.length > 0 ? (
+              <MissionStack missions={missions} onStart={handleStart} onOpen={setSelectedMission} />
+            ) : (
+              <EmptyState title="미션이 없습니다" description="랜덤 미션을 뽑아 첫 채집을 시작하세요." />
+            )}
+          </div>
+          <div className="pointer-events-none fixed inset-x-0 bottom-16 z-40 mx-auto w-full max-w-[430px] px-5 pb-4">
+            <Button
+              className="pointer-events-auto w-full border-2 border-primary bg-white text-primary hover:bg-primary-soft"
+              size="lg"
+              onClick={openDrawMode}
+            >
+              랜덤 미션 뽑기
+            </Button>
+          </div>
         </>
       )}
+
       {selectedMission ? (
         <MissionListDialog
           mission={selectedMission}
-          userId={userId}
           selectedStatus={selectedStatus}
           onSelectStatus={setSelectedStatus}
           onClose={closeMissionDialog}
           onBack={() => setSelectedStatus(null)}
           onRecord={() => selectedStatus && moveToRecord(selectedStatus)}
+          onGoCollections={() => navigate("/collections")}
         />
       ) : null}
     </div>
@@ -202,13 +143,7 @@ function MissionStack({
   return (
     <div className="space-y-0 pb-36 pt-2">
       {missions.map((mission, index) => (
-        <MissionStackCard
-          key={mission.missionId}
-          mission={mission}
-          index={index}
-          onStart={onStart}
-          onOpen={onOpen}
-        />
+        <MissionStackCard key={mission.missionId} mission={mission} index={index} onStart={onStart} onOpen={onOpen} />
       ))}
     </div>
   );
@@ -270,20 +205,20 @@ function MissionStackCard({
 
 function MissionListDialog({
   mission,
-  userId,
   selectedStatus,
   onSelectStatus,
   onClose,
   onBack,
   onRecord,
+  onGoCollections,
 }: {
   mission: Mission;
-  userId?: number;
   selectedStatus: "SUCCESS" | "FAILURE" | null;
   onSelectStatus: (status: "SUCCESS" | "FAILURE") => void;
   onClose: () => void;
   onBack: () => void;
   onRecord: () => void;
+  onGoCollections: () => void;
 }) {
   const isCompleted = mission.status === "SUCCESS" || mission.status === "FAILURE";
 
@@ -302,7 +237,7 @@ function MissionListDialog({
           </button>
         </div>
         {isCompleted ? (
-          <CompletedMissionContent mission={mission} userId={userId} />
+          <CompletedMissionNotice mission={mission} onGoCollections={onGoCollections} />
         ) : !selectedStatus ? (
           <>
             <MissionDialogCard mission={mission} />
@@ -326,9 +261,25 @@ function MissionListDialog({
 function MissionDialogCard({ mission }: { mission: Mission }) {
   return (
     <div className="mt-5 rounded-[22px] border border-gray-200 bg-[#FFFFF7] p-4">
-      <span className="inline-flex rounded-full bg-gray-200 px-3 py-1 text-xs font-semibold text-gray-600">즉흥</span>
+      <span className="inline-flex rounded-full bg-gray-200 px-3 py-1 text-xs font-semibold text-gray-600">
+        {mission.isLocal ? "지역" : "즉흥"}
+      </span>
       <h2 className="mt-3 text-lg font-bold leading-7 text-black-950">{mission.title}</h2>
       <p className="mt-3 text-sm leading-6 text-black-700">{mission.description}</p>
+    </div>
+  );
+}
+
+function CompletedMissionNotice({ mission, onGoCollections }: { mission: Mission; onGoCollections: () => void }) {
+  return (
+    <div className="mt-5">
+      <MissionDialogCard mission={mission} />
+      <p className="mt-4 text-sm leading-6 text-gray-600">
+        이미 채집된 미션입니다. 채집 기록에서 확인해주세요.
+      </p>
+      <Button className="mt-5 w-full" type="button" onClick={onGoCollections}>
+        채집 기록으로 이동
+      </Button>
     </div>
   );
 }
@@ -369,72 +320,6 @@ function ResultConfirm({
             나가기
           </Button>
         </div>
-      </div>
-    </div>
-  );
-}
-
-function CompletedMissionContent({ mission, userId }: { mission: Mission; userId?: number }) {
-  const collectionListQuery = useCollectionsQuery(userId, mission.tripId, mission.status === "SUCCESS" ? "SUCCESS" : "FAILURE");
-  const collectionDetails = useQueries({
-    queries: (collectionListQuery.data ?? []).map((collection) => ({
-      queryKey: collectionKeys.detail(collection.collectionId),
-      queryFn: () => getCollection(userId as number, collection.collectionId),
-      enabled: userId !== undefined,
-    })),
-  });
-  const collection = collectionDetails.find((query) => query.data?.missionId === mission.missionId)?.data ?? null;
-
-  if (collectionListQuery.isLoading || collectionDetails.some((query) => query.isLoading)) {
-    return <p className="mt-6 text-sm text-gray-600">채집 기록을 불러오는 중...</p>;
-  }
-
-  return collection ? (
-    <CompletedCollectionView collection={collection} mission={mission} />
-  ) : (
-    <>
-      <MissionDialogCard mission={mission} />
-      <p className="mt-4 text-sm leading-6 text-gray-600">
-        이 미션의 채집 기록을 찾지 못했어요. 기록 목록에서 다시 확인해주세요.
-      </p>
-    </>
-  );
-}
-
-function CompletedCollectionView({ collection, mission }: { collection: CollectionDetail; mission: Mission }) {
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
-
-  useEffect(() => {
-    let objectUrl: string | null = null;
-    let cancelled = false;
-
-    async function loadImage() {
-      if (!collection.imageId) return;
-      const localImage = await getLocalImage(collection.imageId);
-      if (!localImage || cancelled) return;
-      objectUrl = URL.createObjectURL(localImage.blob);
-      setImageUrl(objectUrl);
-    }
-
-    void loadImage();
-
-    return () => {
-      cancelled = true;
-      if (objectUrl) URL.revokeObjectURL(objectUrl);
-    };
-  }, [collection.imageId]);
-
-  return (
-    <div className="mt-5">
-      <SpecimenImage imageUrl={imageUrl} cropType={collection.cropType} status={collection.status} alt={mission.title} />
-      <div className="mt-4 rounded-[22px] border border-gray-200 bg-[#FFFFF7] p-4">
-        <span className="inline-flex rounded-full bg-gray-200 px-3 py-1 text-xs font-semibold text-gray-600">
-          {collection.status === "SUCCESS" ? "성공" : "실패"}
-        </span>
-        <h2 className="mt-3 text-lg font-bold leading-7 text-black-950">{mission.title}</h2>
-        <p className="mt-3 text-sm leading-6 text-black-700">
-          {collection.memo || "남겨진 한줄평이 없어요."}
-        </p>
       </div>
     </div>
   );

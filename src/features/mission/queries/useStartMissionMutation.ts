@@ -16,6 +16,7 @@ export function useStartMissionMutation(userId?: number, tripId?: number) {
       void queryClient.invalidateQueries({ queryKey: missionKeys.list(tripId) });
       void queryClient.invalidateQueries({ queryKey: missionKeys.detail(response.missionId) });
       void queryClient.invalidateQueries({ queryKey: tripKeys.current(userId) });
+      void queryClient.invalidateQueries({ queryKey: tripKeys.list(userId) });
     },
   });
 }

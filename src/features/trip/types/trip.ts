@@ -1,6 +1,20 @@
-export type CompanionType = "ALONE" | "FRIEND" | "COUPLE" | "ETC";
+export type CompanionType = "ALONE" | "FRIEND" | "COUPLE" | "FAMILY";
 export type TripStatus = "ACTIVE" | "ENDED";
 export type TripMood = "EMOTIONAL" | "WANDERING" | "LOCAL" | "COURAGE";
+
+export const companionLabels: Record<CompanionType, string> = {
+  ALONE: "혼자",
+  FRIEND: "친구",
+  COUPLE: "연인",
+  FAMILY: "가족",
+};
+
+export const moodLabels: Record<TripMood, string> = {
+  EMOTIONAL: "감성",
+  WANDERING: "헤매기",
+  LOCAL: "로컬",
+  COURAGE: "용기",
+};
 
 export type MissionSummary = {
   totalCount: number;
@@ -67,6 +81,25 @@ export type TripReview = {
   failedMissionCount: number;
   totalMissionCount: number;
   totalCollectionCount: number;
+};
+
+export type TripListItem = {
+  tripId: number;
+  tripName: string;
+  region: string;
+  startDate: string;
+  endDate: string;
+  companionType: CompanionType;
+  mood: TripMood;
+  status: TripStatus;
+  successMissionCount: number;
+  failedMissionCount: number;
+  totalMissionCount: number;
+  totalCollectionCount: number;
+};
+
+export type TripListResponse = {
+  trips: TripListItem[];
 };
 
 export type Trip = CurrentTrip;

@@ -40,7 +40,7 @@ const companionOptions: { value: CompanionType; label: string; description: stri
   { value: "ALONE", label: "혼자", description: "내 속도로 천천히" },
   { value: "FRIEND", label: "친구", description: "함께 발견하는 여행" },
   { value: "COUPLE", label: "연인", description: "둘만의 장면 채집" },
-  { value: "ETC", label: "기타", description: "새로운 조합으로" },
+  { value: "FAMILY", label: "가족", description: "가족과 함께 남기는 여행" },
 ];
 
 const moodOptions: { value: TripMood; label: string; description: string }[] = [

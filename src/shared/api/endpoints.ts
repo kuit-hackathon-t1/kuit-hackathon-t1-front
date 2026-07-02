@@ -16,6 +16,7 @@ export const endpoints = {
     login: "/api/v1/login",
   },
   trips: {
+    list: "/api/v1/trips",
     current: "/api/v1/trips/current",
     create: "/api/v1/trips",
     end: (tripId: number) => `/api/v1/trips/${tripId}/end`,
