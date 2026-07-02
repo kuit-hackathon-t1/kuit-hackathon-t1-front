@@ -1,21 +1,24 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router";
 
+import leftArrowIcon from "@/assets/icons/leftarrow.svg";
+import moodCourageIcon from "@/assets/icons/mood-courage.svg";
+import moodEmotionalIcon from "@/assets/icons/mood-emotional.svg";
+import moodLocalIcon from "@/assets/icons/mood-local.svg";
+import moodWanderingIcon from "@/assets/icons/mood-wandering.svg";
 import okayIcon from "@/assets/icons/okay.svg";
+import { useAuthStore } from "@/features/auth/stores/authStore";
 import MissionDrawLoading from "@/features/mission/components/MissionDrawLoading";
 import MissionDrawResult from "@/features/mission/components/MissionDrawResult";
 import { useRandomMissionMutation } from "@/features/mission/queries/useRandomMissionMutation";
 import { useStartMissionMutation } from "@/features/mission/queries/useStartMissionMutation";
 import type { Mission } from "@/features/mission/types/mission";
-import { useAuthStore } from "@/features/auth/stores/authStore";
 import { useCreateTripMutation } from "@/features/trip/queries/useCreateTripMutation";
 import type { CompanionType, TripCreatePayload, TripMood } from "@/features/trip/types/trip";
 import { ApiError } from "@/shared/api/ApiError";
 import { cn } from "@/shared/lib/cn";
 import Button from "@/shared/ui/Button";
-import Card from "@/shared/ui/Card";
 import Input from "@/shared/ui/Input";
-import PageHeader from "@/shared/ui/PageHeader";
 
 type TripWizardState = {
   region: string;
@@ -44,12 +47,20 @@ const companionOptions: { value: CompanionType; label: string; description: stri
   { value: "FAMILY", label: "가족", description: "가족과 함께 남기는 여행" },
 ];
 
-const moodOptions: { value: TripMood; label: string; description: string }[] = [
-  { value: "EMOTIONAL", label: "감성 남기기", description: "빛, 색, 분위기를 오래 기억해요" },
-  { value: "WANDERING", label: "헤매기", description: "골목과 우연을 따라 걸어요" },
-  { value: "LOCAL", label: "지역 느끼기", description: "동네의 표정을 가까이 봐요" },
-  { value: "COURAGE", label: "조금 용기내기", description: "평소보다 한 걸음 더 해봐요" },
+const moodOptions: { value: TripMood; label: string; description: string; icon: string }[] = [
+  { value: "EMOTIONAL", label: "감성 남기기", description: "여행의 분위기를 사진과 문장으로 남겨요", icon: moodEmotionalIcon },
+  { value: "WANDERING", label: "헤매기", description: "계획에서 벗어난 순간을 중심으로 채집해요", icon: moodWanderingIcon },
+  { value: "LOCAL", label: "지역 느끼기", description: "계획에서 벗어난 순간을 중심으로 채집해요", icon: moodLocalIcon },
+  { value: "COURAGE", label: "조금 용기내기", description: "평소보다 지나쳤을 순간에 한걸음 다가가요", icon: moodCourageIcon },
 ];
+
+const validationMessages: Record<1 | 2 | 3 | 4 | 5, string> = {
+  1: "여행지를 입력해야 여행을 시작할 수 있어요.",
+  2: "여행 기간을 정해야 채집을 시작할 수 있어요.",
+  3: "함께 가는 사람을 선택해주세요.",
+  4: "여행 분위기를 선택해주세요.",
+  5: "이번 채집을 기억할 이름을 지어주세요.",
+};
 
 function getErrorMessage(error: unknown) {
   if (error instanceof ApiError && error.status === 409) {
@@ -77,15 +88,30 @@ export default function TripCreatePage() {
   }
 
   function validateStep() {
-    if (step === 1 && !form.region.trim()) return "여행지를 입력해주세요.";
+    if (step === 1 && !form.region.trim()) return validationMessages[1];
     if (step === 2) {
-      if (!form.startDate || !form.endDate) return "여행 기간을 입력해주세요.";
+      if (!form.startDate || !form.endDate) return validationMessages[2];
       if (form.startDate > form.endDate) return "종료일은 시작일 이후여야 합니다.";
     }
-    if (step === 3 && !form.companionType) return "동행을 선택해주세요.";
-    if (step === 4 && !form.mood) return "여행 분위기를 선택해주세요.";
-    if (step === 5 && !form.tripName.trim()) return "여행 이름을 입력해주세요.";
+    if (step === 3 && !form.companionType) return validationMessages[3];
+    if (step === 4 && !form.mood) return validationMessages[4];
+    if (step === 5 && !form.tripName.trim()) return validationMessages[5];
     return null;
+  }
+
+  function moveToStep(nextStep: WizardStep) {
+    setErrorMessage(null);
+    setStep(nextStep);
+  }
+
+  function handleBack() {
+    setErrorMessage(null);
+    if (step === 1) {
+      navigate("/home");
+      return;
+    }
+
+    setStep((current) => (current - 1) as WizardStep);
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -98,7 +124,7 @@ export default function TripCreatePage() {
     }
 
     if (step < 5) {
-      setStep((current) => (current + 1) as WizardStep);
+      moveToStep((step + 1) as WizardStep);
       return;
     }
 
@@ -146,46 +172,45 @@ export default function TripCreatePage() {
   return (
     <div className="-mx-5 -my-6 min-h-dvh bg-[#FFFFF7] px-5 py-6">
       {step <= 5 ? (
-        <>
-          <PageHeader title="새 여행 만들기" />
-          <form className="flex min-h-[calc(100dvh-112px)] flex-col" onSubmit={handleSubmit}>
-            <Progress step={step} />
-            <div className="mt-8 flex-1">
-              {step === 1 ? <RegionStep value={form.region} onChange={(region) => updateForm({ region })} /> : null}
-              {step === 2 ? (
-                <DateStep
-                  startDate={form.startDate}
-                  endDate={form.endDate}
-                  onChange={(patch) => updateForm(patch)}
-                />
-              ) : null}
-              {step === 3 ? (
-                <OptionGrid
-                  title="누구와 갈까요?"
-                  options={companionOptions}
-                  value={form.companionType}
-                  onChange={(companionType) => updateForm({ companionType })}
-                />
-              ) : null}
-              {step === 4 ? (
-                <OptionGrid
-                  title="여행의 분위기를 골라주세요"
-                  options={moodOptions}
-                  value={form.mood}
-                  onChange={(mood) => updateForm({ mood })}
-                />
-              ) : null}
-              {step === 5 ? <NameStep value={form.tripName} onChange={(tripName) => updateForm({ tripName })} /> : null}
-              {errorMessage ? <p className="mt-5 text-sm text-danger">{errorMessage}</p> : null}
-            </div>
-            <div className="grid grid-cols-2 gap-2 pb-3">
-              <Button type="button" variant="grayOutline" disabled={step === 1} onClick={() => setStep((current) => (current - 1) as WizardStep)}>
-                이전
-              </Button>
-              <Button disabled={createTripMutation.isPending}>{step === 5 ? "채집 시작하기" : "다음"}</Button>
-            </div>
-          </form>
-        </>
+        <form className="flex min-h-[calc(100dvh-48px)] flex-col" onSubmit={handleSubmit}>
+          <WizardHeader step={step} onBack={handleBack} />
+          <div className="mt-9 flex-1">
+            {step === 2 ? (
+              <DateStep
+                step={step}
+                startDate={form.startDate}
+                endDate={form.endDate}
+                onChange={(patch) => updateForm(patch)}
+                errorMessage={errorMessage}
+              />
+            ) : null}
+            {step === 1 ? (
+              <RegionStep step={step} value={form.region} onChange={(region) => updateForm({ region })} errorMessage={errorMessage} />
+            ) : null}
+            {step === 3 ? (
+              <CompanionStep
+                step={step}
+                value={form.companionType}
+                onChange={(companionType) => updateForm({ companionType })}
+                errorMessage={errorMessage}
+              />
+            ) : null}
+            {step === 4 ? <MoodStep step={step} value={form.mood} onChange={(mood) => updateForm({ mood })} errorMessage={errorMessage} /> : null}
+            {step === 5 ? (
+              <NameStep step={step} value={form.tripName} onChange={(tripName) => updateForm({ tripName })} errorMessage={errorMessage} />
+            ) : null}
+          </div>
+          <div className="pb-3">
+            <Button
+              className={cn("w-full text-xl", step < 5 && "bg-transparent")}
+              variant={step === 5 ? "primary" : "greenOutline"}
+              size="lg"
+              disabled={createTripMutation.isPending}
+            >
+              {step === 5 ? "채집 시작하기" : "다음"}
+            </Button>
+          </div>
+        </form>
       ) : null}
 
       {step === 6 ? (
@@ -214,74 +239,129 @@ export default function TripCreatePage() {
   );
 }
 
-function Progress({ step }: { step: number }) {
+function WizardHeader({ step, onBack }: { step: WizardStep; onBack: () => void }) {
+  const progress = getDisplayStep(step);
+
   return (
-    <div>
-      <p className="text-sm font-semibold text-primary">{Math.min(step, 5)} / 5</p>
-      <div className="mt-3 h-2 overflow-hidden rounded-full bg-gray-200">
-        <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${(Math.min(step, 5) / 5) * 100}%` }} />
+    <header>
+      <h1 className="text-center text-xl font-bold leading-5 text-black-700">새 여행 만들기</h1>
+      <div className="mt-5 flex items-center gap-3">
+        <button className="-ml-1 flex h-8 w-8 items-center justify-center" type="button" aria-label="뒤로가기" onClick={onBack}>
+          <img className="h-5 w-5" src={leftArrowIcon} alt="" aria-hidden="true" />
+        </button>
+        <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-neutral-100">
+          <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${(progress / 4) * 100}%` }} />
+        </div>
       </div>
+    </header>
+  );
+}
+
+function getDisplayStep(step: WizardStep) {
+  if (step <= 2) return step;
+  if (step <= 4) return 3;
+  return 4;
+}
+
+function StepTitle({ step, children }: { step: WizardStep; children: string }) {
+  return (
+    <div className="flex items-center gap-4">
+      <p className="w-8 shrink-0 text-base font-medium leading-4 text-neutral-400">{getDisplayStep(step)}/4</p>
+      <h2 className="min-w-0 text-2xl font-semibold leading-9 text-black-950">{children}</h2>
     </div>
   );
 }
 
-function RegionStep({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+function FieldError({ message }: { message: string | null }) {
+  return message ? <p className="mt-3 text-xs leading-5 text-danger">{message}</p> : null;
+}
+
+function inputClassName(extra?: string) {
+  return cn(
+    "min-h-12 rounded-[10px] bg-neutral-100 px-3.5 text-sm text-off shadow-[0_4px_4px_rgba(0,0,0,0.10)] placeholder:text-neutral-400",
+    extra,
+  );
+}
+
+function RegionStep({
+  step,
+  value,
+  onChange,
+  errorMessage,
+}: {
+  step: WizardStep;
+  value: string;
+  onChange: (value: string) => void;
+  errorMessage: string | null;
+}) {
   return (
     <section>
-      <h1 className="text-3xl font-bold text-black-950">어디로 여행할까요?</h1>
-      <label className="mt-8 block text-sm font-semibold text-black-700">
-        여행 지역
-        <Input className="mt-3 min-h-14 rounded-2xl bg-white px-4 text-base shadow-card" value={value} onChange={(event) => onChange(event.target.value)} placeholder="예: 경주, 부산 해운대" />
-      </label>
-      <Button className="mt-4" type="button" variant="greenOutline" onClick={() => console.log("현재 여행지 찾기")}>
-        현재 여행지 찾기
-      </Button>
+      <StepTitle step={step}>어디로 여행할까요?</StepTitle>
+      <Input
+        className={inputClassName("mt-16")}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        placeholder="예: 경주, 부산 해운대..."
+      />
+      <FieldError message={errorMessage} />
     </section>
   );
 }
 
 function DateStep({
+  step,
   startDate,
   endDate,
   onChange,
+  errorMessage,
 }: {
+  step: WizardStep;
   startDate: string;
   endDate: string;
   onChange: (patch: Partial<TripWizardState>) => void;
+  errorMessage: string | null;
 }) {
   return (
     <section>
-      <h1 className="text-3xl font-bold text-black-950">얼마나 여행할까요?</h1>
-      <div className="mt-8 grid gap-4">
-        <label className="block text-sm font-semibold text-black-700">
-          시작일
-          <Input className="mt-3 min-h-14 rounded-2xl bg-white px-4 shadow-card" type="date" value={startDate} onChange={(event) => onChange({ startDate: event.target.value })} />
-        </label>
-        <label className="block text-sm font-semibold text-black-700">
-          종료일
-          <Input className="mt-3 min-h-14 rounded-2xl bg-white px-4 shadow-card" type="date" value={endDate} onChange={(event) => onChange({ endDate: event.target.value })} />
-        </label>
+      <StepTitle step={step}>얼마나 여행할까요?</StepTitle>
+      <div className="mt-16 flex items-center gap-3">
+        <Input
+          className={inputClassName("min-w-0 flex-1")}
+          type="date"
+          value={startDate}
+          onChange={(event) => onChange({ startDate: event.target.value })}
+          aria-label="시작일"
+        />
+        <span className="shrink-0 text-sm leading-5 text-neutral-400">—</span>
+        <Input
+          className={inputClassName("min-w-0 flex-1")}
+          type="date"
+          value={endDate}
+          onChange={(event) => onChange({ endDate: event.target.value })}
+          aria-label="종료일"
+        />
       </div>
+      <FieldError message={errorMessage} />
     </section>
   );
 }
 
-function OptionGrid<T extends string>({
-  title,
-  options,
+function CompanionStep({
+  step,
   value,
   onChange,
+  errorMessage,
 }: {
-  title: string;
-  options: { value: T; label: string; description: string }[];
-  value: T | null;
-  onChange: (value: T) => void;
+  step: WizardStep;
+  value: CompanionType | null;
+  onChange: (value: CompanionType) => void;
+  errorMessage: string | null;
 }) {
   return (
     <section>
-      <h1 className="text-3xl font-bold leading-10 text-black-950">{title}</h1>
-      <div className="mt-8 grid grid-cols-2 gap-3">
-        {options.map((option) => {
+      <StepTitle step={step}>누구와 갈까요?</StepTitle>
+      <div className="mt-14 grid grid-cols-2 gap-2">
+        {companionOptions.map((option) => {
           const selected = value === option.value;
           return (
             <button
@@ -289,28 +369,86 @@ function OptionGrid<T extends string>({
               type="button"
               aria-pressed={selected}
               className={cn(
-                "min-h-36 rounded-[24px] border bg-white p-4 text-left shadow-card transition-colors",
-                selected ? "border-primary text-primary" : "border-gray-200 text-black-700",
+                "flex min-h-20 items-center justify-center rounded-[10px] border-2 bg-transparent p-4 text-center text-base font-medium leading-6 transition-colors",
+                selected ? "border-primary bg-primary-soft text-primary" : "border-primary text-black-700",
               )}
               onClick={() => onChange(option.value)}
             >
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-soft text-primary">+</span>
-              <span className="mt-5 block text-lg font-bold">{option.label}</span>
-              <span className="mt-2 block text-xs leading-5 text-gray-600">{option.description}</span>
+              {option.label}
             </button>
           );
         })}
       </div>
+      <FieldError message={errorMessage} />
     </section>
   );
 }
 
-function NameStep({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+function MoodStep({
+  step,
+  value,
+  onChange,
+  errorMessage,
+}: {
+  step: WizardStep;
+  value: TripMood | null;
+  onChange: (value: TripMood) => void;
+  errorMessage: string | null;
+}) {
   return (
     <section>
-      <h1 className="text-3xl font-bold leading-10 text-black-950">여행의 이름을 지어주세요</h1>
-      <p className="mt-4 text-sm leading-6 text-black-700">이름이 여행의 특색을 담으면, 미션에 반영할 수 있어요</p>
-      <Input className="mt-8 min-h-14 rounded-2xl bg-white px-4 text-base shadow-card" value={value} onChange={(event) => onChange(event.target.value)} placeholder="예: 여름 골목 채집" />
+      <StepTitle step={step}>여행의 분위기를 골라주세요</StepTitle>
+      <p className="ml-12 mt-1 text-xs leading-5 text-primary">미션에 반영돼요</p>
+      <div className="mt-11 space-y-3">
+        {moodOptions.map((option) => {
+          const selected = value === option.value;
+          return (
+            <button
+              key={option.value}
+              type="button"
+              aria-pressed={selected}
+              className={cn(
+                "flex min-h-[92px] w-full items-center gap-4 rounded-[10px] border-2 bg-transparent px-5 py-4 text-left transition-colors",
+                selected ? "border-primary bg-primary-soft" : "border-primary",
+              )}
+              onClick={() => onChange(option.value)}
+            >
+              <img className="h-10 w-10 shrink-0" src={option.icon} alt="" aria-hidden="true" />
+              <span className="min-w-0">
+                <span className="block text-base font-medium leading-6 text-black-700">{option.label}</span>
+                <span className="mt-1 block text-xs leading-5 text-black-700">{option.description}</span>
+              </span>
+            </button>
+          );
+        })}
+      </div>
+      <FieldError message={errorMessage} />
+    </section>
+  );
+}
+
+function NameStep({
+  step,
+  value,
+  onChange,
+  errorMessage,
+}: {
+  step: WizardStep;
+  value: string;
+  onChange: (value: string) => void;
+  errorMessage: string | null;
+}) {
+  return (
+    <section>
+      <StepTitle step={step}>여행의 이름을 지어주세요</StepTitle>
+      <p className="ml-12 mt-1 text-xs leading-5 text-primary">이름이 여행의 특색을 담으면, 미션에 반영할 수 있어요</p>
+      <Input
+        className={inputClassName("mt-14")}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        placeholder="예: 경주 딴길 여행"
+      />
+      <FieldError message={errorMessage} />
     </section>
   );
 }
@@ -329,23 +467,22 @@ function CreatedStep({
   const companionLabel = companionOptions.find((option) => option.value === form.companionType)?.label;
 
   return (
-    <section className="flex min-h-[calc(100dvh-48px)] flex-col items-center justify-center text-center">
-      <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary">
-        <img className="h-9 w-9" src={okayIcon} alt="" aria-hidden="true" />
-      </div>
-      <h1 className="mt-8 text-3xl font-bold text-black-950">여행이 시작됐어요</h1>
-      <Card className="mt-8 w-full rounded-[28px] border-gray-200 text-left">
-        <p className="text-xl font-bold text-black-950">{form.tripName}</p>
-        <div className="mt-4 flex flex-wrap gap-2">
-          <span className="rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary">{form.region}</span>
-          <span className="rounded-full bg-gray-50 px-3 py-1 text-xs text-black-700">
-            {form.startDate} - {form.endDate}
-          </span>
-          {companionLabel ? <span className="rounded-full bg-gray-50 px-3 py-1 text-xs text-black-700">{companionLabel}</span> : null}
+    <section className="flex min-h-[calc(100dvh-48px)] flex-col text-center">
+      <div className="flex flex-1 flex-col items-center justify-center">
+        <div className="flex h-16 w-16 items-center justify-center rounded-full border border-primary/20 bg-primary-soft">
+          <img className="h-7 w-7" src={okayIcon} alt="" aria-hidden="true" />
         </div>
-      </Card>
-      {errorMessage ? <p className="mt-5 text-sm text-danger">{errorMessage}</p> : null}
-      <Button className="mt-auto w-full" size="lg" onClick={onPickMission} disabled={disabled}>
+        <p className="mt-7 text-xs leading-5 text-black-700">여행이 시작됐어요</p>
+        <h1 className="mt-2 text-2xl font-bold leading-9 text-black-950">{form.tripName}</h1>
+        <p className="mt-2 text-xs leading-5 text-black-700">
+          {form.region} · {form.startDate} - {form.endDate}
+        </p>
+        {companionLabel ? (
+          <span className="mt-2 rounded-full bg-gray-100 px-4 py-1 text-xs font-medium leading-5 text-black-700">{companionLabel}</span>
+        ) : null}
+        {errorMessage ? <p className="mt-5 text-sm text-danger">{errorMessage}</p> : null}
+      </div>
+      <Button className="w-full" size="lg" type="button" onClick={onPickMission} disabled={disabled}>
         첫 미션 뽑기
       </Button>
     </section>
