@@ -27,10 +27,3 @@ export async function getMissions(
 export async function getMission(userId: number, missionId: number): Promise<MissionDetail> {
   return fetchClient.get<MissionDetail>(endpoints.missions.detail(missionId), { userId });
 }
-
-export async function completeMission(missionId?: number, userId?: number, status?: unknown): Promise<void> {
-  void missionId;
-  void userId;
-  void status;
-  return undefined;
-}

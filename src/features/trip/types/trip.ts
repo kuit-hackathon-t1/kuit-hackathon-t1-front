@@ -37,9 +37,9 @@ export type TripCreatePayload = {
 
 export type TripReview = {
   trip: CurrentTrip;
-  totalCollections: number;
-  completedCount: number;
-  failedCount: number;
+  totalCollectionCount: number;
+  successMissionCount: number;
+  failedMissionCount: number;
 };
 
 export type Trip = CurrentTrip;

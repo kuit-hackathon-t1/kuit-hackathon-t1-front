@@ -1,7 +1,7 @@
-import type { InsectShape } from "@/features/collection/types/collection";
+import type { CropType } from "@/features/collection/types/collection";
 import { cn } from "@/shared/lib/cn";
 
-const shapes: { value: InsectShape; label: string }[] = [
+const shapes: { value: CropType; label: string }[] = [
   { value: "BUTTERFLY", label: "나비" },
   { value: "BEETLE", label: "딱정벌레" },
   { value: "DRAGONFLY", label: "잠자리" },
@@ -11,8 +11,8 @@ export default function ShapeSelector({
   value,
   onChange,
 }: {
-  value: InsectShape;
-  onChange: (shape: InsectShape) => void;
+  value: CropType | null;
+  onChange: (shape: CropType) => void;
 }) {
   return (
     <div className="grid grid-cols-3 gap-2">
