@@ -1,4 +1,5 @@
 import MissionStatusBadge from "@/features/mission/components/MissionStatusBadge";
+import { getMissionCategoryMeta } from "@/features/mission/lib/missionCategory";
 import type { Mission } from "@/features/mission/types/mission";
 import Button from "@/shared/ui/Button";
 import Card from "@/shared/ui/Card";
@@ -12,6 +13,7 @@ type MissionCardProps = {
 export default function MissionCard({ mission, onStart, onOpen }: MissionCardProps) {
   const canStart = mission.status === "RECOMMENDED";
   const canOpen = mission.status === "ACTIVE" || mission.status === "SUCCESS" || mission.status === "FAILURE";
+  const categoryMeta = getMissionCategoryMeta(mission.category);
   const content = (
     <>
       <div className="flex items-start justify-between gap-3">
@@ -22,8 +24,9 @@ export default function MissionCard({ mission, onStart, onOpen }: MissionCardPro
         <MissionStatusBadge status={mission.status} />
       </div>
       <div className="mt-4 flex items-center justify-between text-xs text-neutral-500">
-        <span>{mission.category}</span>
-        <span>{mission.isLocal ? "LOCAL" : "RANDOM"}</span>
+        <span className={`inline-flex rounded-full px-3 py-1 font-semibold ${categoryMeta.className}`}>
+          {categoryMeta.label}
+        </span>
       </div>
     </>
   );
