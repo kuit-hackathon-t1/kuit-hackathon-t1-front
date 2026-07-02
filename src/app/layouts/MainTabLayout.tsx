@@ -5,7 +5,7 @@ import { cn } from "@/shared/lib/cn";
 export default function MainTabLayout() {
   return (
     <div className="relative min-h-dvh pb-20">
-      <main>
+      <main className="px-5 py-6">
         <Outlet />
       </main>
 
