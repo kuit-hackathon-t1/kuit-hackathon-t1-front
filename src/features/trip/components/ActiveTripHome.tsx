@@ -4,7 +4,6 @@ import { Link, useNavigate } from "react-router";
 import cameraIcon from "@/assets/icons/camera.svg";
 import closeIcon from "@/assets/icons/close.svg";
 import okayIcon from "@/assets/icons/okay.svg";
-import shuffleIcon from "@/assets/icons/shuffle.svg";
 import warningIcon from "@/assets/icons/warning.svg";
 import { useAuthStore } from "@/features/auth/stores/authStore";
 import { useMissionListQuery } from "@/features/mission/queries/useMissionListQuery";
@@ -54,80 +53,70 @@ export default function ActiveTripHome({ trip, userId }: ActiveTripHomeProps) {
     navigate(`/trips/${trip.tripId}/review`, { replace: true });
   }
 
+  const tripDayLabel = getTripDayLabel(trip.startDate, `${trip.startDate} - ${trip.endDate}`);
+
   return (
-    <div className="space-y-5">
-      <header className="pt-2">
-        <p className="text-sm text-gray-600">진행 중인 여행</p>
-        <h1 className="mt-1 text-2xl font-bold text-black-950">{nickname}님의 청춘도감</h1>
+    <div className="flex h-full min-h-0 flex-col gap-3 overflow-hidden bg-[#FFFFF7]">
+      <header className="flex items-start justify-between gap-4 pt-6">
+        <button className="min-w-0 text-left" type="button" onClick={() => setIsTripInfoOpen(true)}>
+          <p className="text-xs font-medium leading-4 text-black-950">
+            <span className="font-bold">{nickname}님</span>의 청춘도감
+          </p>
+          <h1 className="mt-1 truncate text-2xl font-normal leading-9 text-black-950">{trip.tripName}</h1>
+          <p className="text-xs leading-5 text-black-700">
+            {trip.region} · {tripDayLabel}
+          </p>
+        </button>
+
+        <div className="mt-2 flex shrink-0 items-center rounded-[10px] px-2 py-1">
+          <StatCount label="완료" value={trip.missionSummary.successCount} valueClassName="text-primary" />
+          <div className="mx-3 h-8 w-px bg-[#F4D8B6]" aria-hidden="true" />
+          <StatCount label="실패" value={trip.missionSummary.failedCount} valueClassName="text-off" />
+        </div>
       </header>
 
-      <button
-        className="block w-full rounded-[32px] border border-primary/20 bg-[#FFFFF7] p-5 text-left shadow-card"
-        type="button"
-        onClick={() => setIsTripInfoOpen(true)}
-      >
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <h2 className="text-xl font-bold text-black-950">{trip.tripName}</h2>
-            <p className="mt-2 text-sm text-black-700">{trip.region}</p>
-            <p className="mt-1 text-xs text-gray-600">
-              {trip.startDate} - {trip.endDate}
-            </p>
-          </div>
-          <div className="rounded-2xl bg-primary-soft px-3 py-2 text-right text-xs font-semibold text-primary">
-            <p>성공 {trip.missionSummary.successCount}</p>
-            <p className="mt-1">실패 {trip.missionSummary.failedCount}</p>
-          </div>
-        </div>
-        <div
-          className="mt-6 flex h-40 items-center justify-center rounded-[28px] border border-dashed border-primary/30 bg-white text-sm font-semibold text-primary"
-          style={{
-            backgroundImage: "url('/images/home/open-book.png')",
-            backgroundSize: "contain",
-            backgroundRepeat: "no-repeat",
-            backgroundPosition: "center",
-          }}
-        >
-          <span className="rounded-full bg-white/85 px-4 py-2">펼쳐진 도감</span>
-        </div>
-      </button>
+      <section className="relative flex h-[230px] shrink-0 items-center justify-center" aria-label="청춘도감">
+        <span className="absolute left-0 top-1/2 -translate-y-1/2 text-4xl font-light leading-none text-off" aria-hidden="true">
+          ‹
+        </span>
+        <OpenBookImage />
+        <span className="absolute right-0 top-1/2 -translate-y-1/2 text-4xl font-light leading-none text-off" aria-hidden="true">
+          ›
+        </span>
+      </section>
 
-      <Card className="rounded-[28px] border-gray-200">
-        <div className="flex items-center justify-between">
-          <p className="text-sm font-semibold text-black-950">진행 중인 미션</p>
-          <span className="text-xs text-gray-600">{activeMissions.length}개</span>
-        </div>
-        <div className="mt-4 space-y-3">
-          {activeMissionQuery.isLoading ? (
-            <p className="text-sm text-gray-600">미션을 불러오는 중...</p>
-          ) : activeMissions.length > 0 ? (
-            activeMissions.slice(0, 4).map((mission) => (
-              <button
-                key={mission.missionId}
-                type="button"
-                className="flex w-full items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-left text-sm text-black-700"
-                onClick={() => setSelectedMission(mission)}
-              >
-                <span className="line-clamp-2 font-medium">{mission.title}</span>
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-lg shadow-card" aria-hidden="true">
-                  <img className="h-5 w-5" src={cameraIcon} alt="" />
-                </span>
-              </button>
-            ))
-          ) : (
-            <div className="flex min-h-24 items-center justify-center rounded-2xl border border-dashed border-gray-200 bg-gray-50 text-sm text-off">
-              시작한 미션이 없어요
-            </div>
-          )}
-        </div>
-      </Card>
+      <section className="flex min-h-0 flex-1 flex-col">
+        <p className="mb-2 text-xs leading-5 text-black-700">진행 중인 미션</p>
+        <div className="flex min-h-0 flex-1 flex-col rounded-2xl bg-[#F1F1EF] px-3 py-3">
+          <div className="flex-1 space-y-2 overflow-hidden">
+            {activeMissionQuery.isLoading ? (
+              <p className="flex h-full items-center justify-center text-sm text-gray-600">미션을 불러오는 중...</p>
+            ) : activeMissions.length > 0 ? (
+              activeMissions.slice(0, 4).map((mission) => (
+                <button
+                  key={mission.missionId}
+                  type="button"
+                  className="flex min-h-12 w-full items-center justify-between gap-3 rounded-[10px] bg-white px-3 py-3 text-left text-base font-medium leading-5 text-black-950 shadow-[0_4px_4px_rgba(0,0,0,0.15)]"
+                  onClick={() => setSelectedMission(mission)}
+                >
+                  <span className="line-clamp-2">{mission.title}</span>
+                  <img className="h-6 w-6 shrink-0 opacity-70" src={cameraIcon} alt="" aria-hidden="true" />
+                </button>
+              ))
+            ) : (
+              <div className="flex h-full items-center justify-center rounded-xl border border-dashed border-gray-300 bg-white/70 text-sm text-off">
+                시작한 미션이 없어요
+              </div>
+            )}
+          </div>
 
-      <Link to="/missions?draw=1">
-        <Button className="w-full" size="lg">
-          <img className="h-5 w-5" src={shuffleIcon} alt="" aria-hidden="true" />
-          랜덤 미션 뽑기
-        </Button>
-      </Link>
+          <Link className="mt-3 block" to="/missions?draw=1">
+            <Button className="w-full bg-white text-base font-medium" variant="greenOutline" size="md">
+              랜덤 미션 뽑기
+            </Button>
+          </Link>
+        </div>
+      </section>
 
       {selectedMission ? (
         <MissionHomeDialog
@@ -156,6 +145,57 @@ export default function ActiveTripHome({ trip, userId }: ActiveTripHomeProps) {
       />
     </div>
   );
+}
+
+function StatCount({ label, value, valueClassName }: { label: string; value: number; valueClassName: string }) {
+  return (
+    <div className="min-w-7 text-center">
+      <p className={`text-xl font-bold leading-5 ${valueClassName}`}>{value}</p>
+      <p className="mt-1 text-xs leading-5 text-black-700">{label}</p>
+    </div>
+  );
+}
+
+function OpenBookImage() {
+  const [hasImage, setHasImage] = useState(true);
+
+  return (
+    <div className="flex h-full w-full max-w-[340px] items-center justify-center px-8">
+      {hasImage ? (
+        <img
+          className="h-full w-full object-contain"
+          src="/images/home/open-book.png"
+          alt="펼쳐진 청춘도감"
+          onError={() => setHasImage(false)}
+        />
+      ) : (
+        <div className="flex h-48 w-full items-center justify-center rounded-[28px] border border-dashed border-primary/30 bg-white text-sm font-semibold text-primary shadow-card">
+          펼쳐진 도감
+        </div>
+      )}
+    </div>
+  );
+}
+
+function getTripDayLabel(startDate: string, fallback: string) {
+  const start = parseDateOnly(startDate);
+  if (!start) return fallback;
+
+  const today = new Date();
+  const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const diffDays = Math.floor((todayDate.getTime() - start.getTime()) / 86_400_000) + 1;
+
+  if (!Number.isFinite(diffDays)) return fallback;
+  return `${Math.max(diffDays, 1)}일차`;
+}
+
+function parseDateOnly(value: string) {
+  const [year, month, date] = value.split("-").map(Number);
+  if (!year || !month || !date) return null;
+
+  const parsed = new Date(year, month - 1, date);
+  if (Number.isNaN(parsed.getTime())) return null;
+  return parsed;
 }
 
 function MissionHomeDialog({

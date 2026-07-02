@@ -1,3 +1,4 @@
+import shuffleIcon from "@/assets/icons/shuffle.svg";
 import type { Mission } from "@/features/mission/types/mission";
 import Button from "@/shared/ui/Button";
 import Card from "@/shared/ui/Card";
@@ -35,8 +36,9 @@ export default function MissionDrawResult({
             className="min-h-8 px-4"
             onClick={onRetry}
             disabled={retryDisabled}
+            leftIcon={<img className="h-4 w-4" src={shuffleIcon} alt="" />}
           >
-            ↝ 다시 뽑기
+            다시 뽑기
           </Button>
         </div>
       </div>
