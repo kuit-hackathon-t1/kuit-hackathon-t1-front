@@ -51,7 +51,7 @@ export default function Button({
   return (
     <button
       className={cn(
-        "inline-flex shrink-0 items-center justify-center gap-2 rounded-full border border-transparent font-semibold whitespace-nowrap transition-colors",
+        "inline-flex shrink-0 items-center justify-center gap-2 rounded-full border-2 border-transparent font-semibold whitespace-nowrap transition-colors",
         "disabled:pointer-events-none disabled:border-gray-200 disabled:bg-black-800 disabled:text-black-700",
         variantStyles[resolvedVariant],
         sizeStyles[size],
