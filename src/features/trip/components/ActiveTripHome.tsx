@@ -2,10 +2,8 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 
 import cameraIcon from "@/assets/icons/camera.svg";
-import closeIcon from "@/assets/icons/close.svg";
-import okayIcon from "@/assets/icons/okay.svg";
-import warningIcon from "@/assets/icons/warning.svg";
 import { useAuthStore } from "@/features/auth/stores/authStore";
+import MissionActionDialog from "@/features/mission/components/MissionActionDialog";
 import { useMissionListQuery } from "@/features/mission/queries/useMissionListQuery";
 import type { Mission } from "@/features/mission/types/mission";
 import type { RecordResultStatus } from "@/features/record/types/record";
@@ -14,7 +12,6 @@ import TripInfoDialog from "@/features/trip/components/TripInfoDialog";
 import { useEndTripMutation } from "@/features/trip/queries/useEndTripMutation";
 import type { Trip } from "@/features/trip/types/trip";
 import Button from "@/shared/ui/Button";
-import Card from "@/shared/ui/Card";
 
 type ActiveTripHomeProps = {
   trip: Trip;
@@ -119,7 +116,7 @@ export default function ActiveTripHome({ trip, userId }: ActiveTripHomeProps) {
       </section>
 
       {selectedMission ? (
-        <MissionHomeDialog
+        <MissionActionDialog
           mission={selectedMission}
           selectedStatus={selectedStatus}
           onSelectStatus={setSelectedStatus}
@@ -196,85 +193,4 @@ function parseDateOnly(value: string) {
   const parsed = new Date(year, month - 1, date);
   if (Number.isNaN(parsed.getTime())) return null;
   return parsed;
-}
-
-function MissionHomeDialog({
-  mission,
-  selectedStatus,
-  onSelectStatus,
-  onClose,
-  onBack,
-  onRecord,
-}: {
-  mission: Mission;
-  selectedStatus: RecordResultStatus | null;
-  onSelectStatus: (status: RecordResultStatus) => void;
-  onClose: () => void;
-  onBack: () => void;
-  onRecord: () => void;
-}) {
-  const isSuccess = selectedStatus === "SUCCESS";
-
-  return (
-    <div className="fixed inset-x-0 bottom-0 z-[60] mx-auto flex w-full max-w-[430px] items-end justify-center bg-black/10 px-5 pb-24 pt-6">
-      <Card className="max-h-[72dvh] w-full max-w-[360px] overflow-y-auto rounded-[28px] border-gray-200 bg-white p-5 shadow-card">
-        <div className="flex items-center justify-between">
-          <p className="text-sm font-semibold text-primary">진행중인 미션</p>
-          <button
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 text-2xl text-black-700"
-            type="button"
-            aria-label="닫기"
-            onClick={onClose}
-          >
-            <img className="h-4 w-4" src={closeIcon} alt="" aria-hidden="true" />
-          </button>
-        </div>
-
-        {!selectedStatus ? (
-          <>
-            <div className="mt-5 rounded-[22px] border border-gray-200 bg-[#FFFFF7] p-4">
-              <h2 className="text-lg font-bold leading-7 text-black-950">{mission.title}</h2>
-              <p className="mt-2 text-sm leading-6 text-black-700">{mission.description}</p>
-              <span className="mt-4 inline-flex rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary">
-                진행중
-              </span>
-            </div>
-            <div className="mt-5 grid grid-cols-2 gap-2">
-              <Button type="button" variant="grayOutline" onClick={() => onSelectStatus("FAILURE")}>
-                실패
-              </Button>
-              <Button type="button" onClick={() => onSelectStatus("SUCCESS")}>
-                성공
-              </Button>
-            </div>
-          </>
-        ) : (
-          <div className="mt-6 text-center">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary-soft text-2xl text-primary">
-              <img className="h-6 w-6" src={isSuccess ? okayIcon : warningIcon} alt="" aria-hidden="true" />
-            </div>
-            <h2 className="mt-4 text-xl font-bold text-black-950">{isSuccess ? "고생했어요!" : "미션에 실패하셨나요?"}</h2>
-            <p className="mt-3 text-sm leading-6 text-black-700">
-              {isSuccess
-                ? "미션을 성공적으로 완료했어요. 성공의 순간을 사진으로 채집해 볼까요?"
-                : "미션에 실패해도 추억은 저장할 수 있어요. 실패한 추억을 채집해볼까요?"}
-            </p>
-            <div className="mt-6 grid gap-2">
-              <Button type="button" onClick={onRecord}>
-                사진 채집하기
-              </Button>
-              <div className="grid grid-cols-2 gap-2">
-                <Button type="button" variant="grayOutline" onClick={onBack}>
-                  다시 선택
-                </Button>
-                <Button type="button" variant="grayOutline" onClick={onClose}>
-                  나가기
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
-      </Card>
-    </div>
-  );
 }
