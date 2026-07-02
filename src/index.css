@@ -6,7 +6,7 @@
     "Noto Sans KR", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
 
-  --color-primary: #17e6bd;
+  --color-primary: #02C45D;
   --color-primary-hover: #3ba98c;
   --color-primary-soft: #effbf7;
   --color-secondary: #fdffe2;
@@ -21,9 +21,9 @@
   --color-gray-50: #f7f7f7;
   --color-gray-200: #d9d9d9;
   --color-gray-400: #a3a3a3;
-  --color-gray-500: #919291;
   --color-gray-600: #71717b;
   --color-gray-900: #27272a;
+  --color-off: #919291;
 
   --radius-sm: 8px;
   --radius-md: 12px;

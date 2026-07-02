@@ -2,11 +2,13 @@ import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 import { cn } from "@/shared/lib/cn";
 
-export type ButtonVariant = "primary" | "outline" | "secondary" | "ghost" | "danger";
+export type ButtonVariant = "primary" | "greenOutline" | "grayOutline" | "grayFilled";
 export type ButtonSize = "xs" | "sm" | "md" | "lg";
 
+type LegacyButtonVariant = "secondary" | "ghost";
+
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: ButtonVariant;
+  variant?: ButtonVariant | LegacyButtonVariant;
   size?: ButtonSize;
   fullWidth?: boolean;
   leftIcon?: ReactNode;
@@ -16,10 +18,14 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary: "bg-primary text-white hover:bg-primary-hover",
-  outline: "border-primary bg-transparent text-primary hover:bg-primary/10",
-  secondary: "bg-gray-50 text-black-800 hover:bg-gray-200",
-  ghost: "bg-transparent text-gray-500 hover:bg-gray-50",
-  danger: "bg-danger text-white hover:bg-danger/85",
+  greenOutline: "border-primary bg-transparent text-primary hover:bg-primary/10",
+  grayOutline: "border-gray-400 bg-transparent text-off hover:bg-gray-50",
+  grayFilled: "bg-black-700 text-gray-400 hover:bg-black-800",
+};
+
+const legacyVariantMap: Record<LegacyButtonVariant, ButtonVariant> = {
+  secondary: "grayOutline",
+  ghost: "grayFilled",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -39,12 +45,15 @@ export default function Button({
   children,
   ...props
 }: ButtonProps) {
+  const resolvedVariant: ButtonVariant =
+    variant === "secondary" || variant === "ghost" ? legacyVariantMap[variant] : variant;
+
   return (
     <button
       className={cn(
         "inline-flex shrink-0 items-center justify-center gap-2 rounded-full border border-transparent font-semibold whitespace-nowrap transition-colors",
         "disabled:pointer-events-none disabled:border-gray-200 disabled:bg-black-800 disabled:text-black-700",
-        variantStyles[variant],
+        variantStyles[resolvedVariant],
         sizeStyles[size],
         fullWidth && "w-full",
         className,
