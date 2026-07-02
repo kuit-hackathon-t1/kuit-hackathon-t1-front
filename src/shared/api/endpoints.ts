@@ -22,8 +22,8 @@ export const endpoints = {
     review: (tripId: number) => `/api/v1/trips/${tripId}/review`,
   },
   missions: {
-    random: (tripId: number) => `/api/v1/trips/${tripId}/missions/random`,
-    list: (tripId: number, status?: string) => withQuery(`/api/v1/trips/${tripId}/missions`, { status }),
+    random: (tripId: number) => withQuery("/api/v1/missions/random", { tripId }),
+    list: (tripId: number, status?: string) => withQuery("/api/v1/missions", { tripId, status }),
     detail: (missionId: number) => `/api/v1/missions/${missionId}`,
     start: (missionId: number) => `/api/v1/missions/${missionId}/start`,
   },

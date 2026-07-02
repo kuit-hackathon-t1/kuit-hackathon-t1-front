@@ -3,7 +3,6 @@ import type {
   CollectionCreatePayload,
   CollectionStatus,
 } from "@/features/collection/types/collection";
-import { getMission } from "@/features/mission/api/missionApi";
 
 const COLLECTIONS_KEY = "mock-collections";
 const TRIPS_KEY = "mock-trips";
@@ -29,7 +28,6 @@ function readTrips(): MockTrip[] {
 }
 
 export async function createCollection(payload: CollectionCreatePayload): Promise<Collection> {
-  const mission = await getMission(payload.missionId);
   const trip = readTrips().find((item) => item.id === payload.tripId && item.userId === payload.userId);
 
   const collection: Collection = {
@@ -37,8 +35,7 @@ export async function createCollection(payload: CollectionCreatePayload): Promis
     userId: payload.userId,
     tripId: payload.tripId,
     missionId: payload.missionId,
-    missionTitle: mission?.title ?? "이름 없는 미션",
-    missionDescription: mission?.description,
+    missionTitle: "이름 없는 미션",
     status: payload.status,
     memo: payload.memo,
     shape: payload.shape,

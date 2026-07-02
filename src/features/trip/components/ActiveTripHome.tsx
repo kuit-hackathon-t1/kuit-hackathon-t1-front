@@ -1,16 +1,20 @@
 import { Link, useNavigate } from "react-router";
 
+import { useMissionListQuery } from "@/features/mission/queries/useMissionListQuery";
 import type { Trip } from "@/features/trip/types/trip";
 import Button from "@/shared/ui/Button";
 import Card from "@/shared/ui/Card";
 
 type ActiveTripHomeProps = {
   trip: Trip;
+  userId?: number;
   onEndTrip: () => Promise<Trip>;
 };
 
-export default function ActiveTripHome({ trip, onEndTrip }: ActiveTripHomeProps) {
+export default function ActiveTripHome({ trip, userId, onEndTrip }: ActiveTripHomeProps) {
   const navigate = useNavigate();
+  const activeMissionQuery = useMissionListQuery(userId, trip.tripId, "ACTIVE");
+  const activeMissions = activeMissionQuery.data ?? [];
 
   async function handleEndTrip() {
     const endedTrip = await onEndTrip();
@@ -27,6 +31,23 @@ export default function ActiveTripHome({ trip, onEndTrip }: ActiveTripHomeProps)
           {trip.startDate} - {trip.endDate}
         </p>
       </Card>
+
+      {activeMissions.length > 0 ? (
+        <Card>
+          <p className="text-sm font-medium text-neutral-700">진행 중인 미션</p>
+          <div className="mt-3 space-y-2">
+            {activeMissions.map((mission) => (
+              <Link
+                key={mission.missionId}
+                to={`/missions/${mission.missionId}/progress`}
+                className="block rounded-lg border border-neutral-200 px-3 py-2 text-sm text-neutral-700"
+              >
+                {mission.title}
+              </Link>
+            ))}
+          </div>
+        </Card>
+      ) : null}
 
       <div className="grid gap-2">
         <Link to="/missions">
