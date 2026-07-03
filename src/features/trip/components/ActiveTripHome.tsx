@@ -56,19 +56,19 @@ export default function ActiveTripHome({ trip, userId }: ActiveTripHomeProps) {
 
   async function confirmEndTrip() {
     await endTripMutation.mutateAsync(trip.tripId);
-    navigate(`/trips/${trip.tripId}/review`, { replace: true });
+    navigate(`/collections?tripId=${trip.tripId}`, { replace: true });
   }
 
   const tripDayLabel = getTripDayLabel(trip.startDate, `${trip.startDate} - ${trip.endDate}`);
 
   return (
-    <div className="flex min-h-[calc(100dvh-64px)] flex-col gap-3 overflow-hidden bg-[#FFFFF7] px-5 py-6">
+    <div className="flex min-h-[calc(100dvh-64px)] flex-col gap-3 overflow-hidden bg-[#FFFFF7] px-4 pt-6 pb-2">
       <header className="flex items-start justify-between gap-4 pt-6">
         <button className="min-w-0 text-left" type="button" onClick={() => setIsTripInfoOpen(true)}>
           <p className="text-xs font-medium leading-4 text-black-950">
             <span className="font-bold">{nickname}님</span>의 청춘도감
           </p>
-          <h1 className="mt-1 truncate text-2xl font-normal leading-9 text-black-950">{trip.tripName}</h1>
+          <h1 className="mt-1 truncate font-jandari text-2xl font-normal leading-9 text-black-950">{trip.tripName}</h1>
           <p className="text-xs leading-5 text-black-700">
             {trip.region} · {tripDayLabel}
           </p>
@@ -85,10 +85,10 @@ export default function ActiveTripHome({ trip, userId }: ActiveTripHomeProps) {
         <OpenBookImage collections={collections} onSelectCollection={setSelectedCollectionId} />
       </section>
 
-      <section className="flex min-h-0 flex-1 flex-col">
+      <section className="flex min-h-0 flex-1 flex-col justify-end">
         <p className="mb-2 text-xs leading-5 text-black-700">진행 중인 미션</p>
-        <div className="flex min-h-0 flex-1 flex-col rounded-2xl bg-[#F1F1EF] px-3 py-3">
-          <div className="flex-1 space-y-2 overflow-hidden">
+        <div className="-mx-2 flex min-h-0 flex-col rounded-2xl bg-[#F1F1EF] px-3 py-3">
+          <div className="space-y-2 overflow-hidden">
             {activeMissionQuery.isLoading ? (
               <p className="flex h-full items-center justify-center text-sm text-gray-600">미션을 불러오는 중...</p>
             ) : activeMissions.length > 0 ? (

@@ -2,10 +2,6 @@ import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router";
 
 import leftArrowIcon from "@/assets/icons/leftarrow.svg";
-import moodCourageIcon from "@/assets/icons/mood-courage.svg";
-import moodEmotionalIcon from "@/assets/icons/mood-emotional.svg";
-import moodLocalIcon from "@/assets/icons/mood-local.svg";
-import moodWanderingIcon from "@/assets/icons/mood-wandering.svg";
 import okayIcon from "@/assets/icons/okay.svg";
 import { useAuthStore } from "@/features/auth/stores/authStore";
 import MissionDrawLoading from "@/features/mission/components/MissionDrawLoading";
@@ -13,6 +9,7 @@ import MissionDrawResult from "@/features/mission/components/MissionDrawResult";
 import { useRandomMissionMutation } from "@/features/mission/queries/useRandomMissionMutation";
 import { useStartMissionMutation } from "@/features/mission/queries/useStartMissionMutation";
 import type { Mission } from "@/features/mission/types/mission";
+import { tripMoodMeta } from "@/features/trip/lib/tripMoodMeta";
 import { useCreateTripMutation } from "@/features/trip/queries/useCreateTripMutation";
 import type { CompanionType, TripCreatePayload, TripMood } from "@/features/trip/types/trip";
 import { ApiError } from "@/shared/api/ApiError";
@@ -48,10 +45,10 @@ const companionOptions: { value: CompanionType; label: string; description: stri
 ];
 
 const moodOptions: { value: TripMood; label: string; description: string; icon: string }[] = [
-  { value: "EMOTIONAL", label: "감성 남기기", description: "여행의 분위기를 사진과 문장으로 남겨요", icon: moodEmotionalIcon },
-  { value: "WANDERING", label: "헤매기", description: "계획에서 벗어난 순간을 중심으로 채집해요", icon: moodWanderingIcon },
-  { value: "LOCAL", label: "지역 느끼기", description: "계획에서 벗어난 순간을 중심으로 채집해요", icon: moodLocalIcon },
-  { value: "COURAGE", label: "조금 용기내기", description: "평소보다 지나쳤을 순간에 한걸음 다가가요", icon: moodCourageIcon },
+  { value: "EMOTIONAL", ...tripMoodMeta.EMOTIONAL },
+  { value: "WANDERING", ...tripMoodMeta.WANDERING },
+  { value: "LOCAL", ...tripMoodMeta.LOCAL },
+  { value: "COURAGE", ...tripMoodMeta.COURAGE },
 ];
 
 const validationMessages: Record<1 | 2 | 3 | 4 | 5, string> = {
@@ -170,7 +167,12 @@ export default function TripCreatePage() {
   if (!user) return null;
 
   return (
-    <div className="-mx-5 -my-6 min-h-dvh bg-[#FFFFF7] px-5 py-6">
+    <div
+      className={cn(
+        "-mx-5 -my-6 min-h-dvh bg-[#FFFFF7] px-5 py-6",
+        step === 7 && "flex h-dvh min-h-0 flex-col overflow-hidden",
+      )}
+    >
       {step <= 5 ? (
         <form className="flex min-h-[calc(100dvh-48px)] flex-col" onSubmit={handleSubmit}>
           <WizardHeader step={step} onBack={handleBack} />
@@ -230,7 +232,6 @@ export default function TripCreatePage() {
             mission={pickedMission}
             onRetry={handlePickMission}
             onStart={handleStartMission}
-            retryDisabled={randomMissionMutation.isPending}
             startDisabled={startMissionMutation.isPending}
           />
         )

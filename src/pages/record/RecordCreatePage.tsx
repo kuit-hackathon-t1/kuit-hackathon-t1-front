@@ -184,11 +184,11 @@ export default function RecordCreatePage() {
           <p className="mt-3 text-sm leading-6 text-black-700">사진을 골라 청춘 조각으로 만들어보세요</p>
 
           <label
-            className="mt-7 flex min-h-[45dvh] cursor-pointer flex-col items-center justify-center overflow-hidden rounded-[28px] border border-dashed border-gray-300 bg-gray-100 p-4 text-center"
+            className="mt-7 flex min-h-[40dvh] cursor-pointer flex-col items-center justify-center overflow-hidden rounded-[28px] border border-dashed border-gray-300 bg-gray-100 p-4 text-center"
             htmlFor={fileInputId}
           >
             {previewUrl ? (
-              <img className="h-full max-h-[45dvh] w-full rounded-[22px] object-cover" src={previewUrl} alt="선택한 사진 미리보기" />
+              <img className="h-full max-h-[40dvh] w-full rounded-[22px] object-cover" src={previewUrl} alt="선택한 사진 미리보기" />
             ) : (
               <>
                 <span className="flex h-16 w-16 items-center justify-center text-3xl text-gray-500" aria-hidden="true">
@@ -207,7 +207,7 @@ export default function RecordCreatePage() {
             onChange={(event) => updateImageFile(event.target.files?.[0] ?? null)}
           />
 
-          <div className="mt-auto rounded-[16px] bg-[#9D9F9C] p-3">
+          <div className="mt-6 rounded-[16px] bg-[#9D9F9C] p-3">
             <p className="text-xs font-medium text-white">어떤 모양으로 채집할까요?</p>
             <div className="mt-3">
               <ShapeSelector value={flow.cropType} onChange={(cropType) => updateFlow({ cropType })} />
