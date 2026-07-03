@@ -56,7 +56,7 @@ export default function ActiveTripHome({ trip, userId }: ActiveTripHomeProps) {
 
   async function confirmEndTrip() {
     await endTripMutation.mutateAsync(trip.tripId);
-    navigate(`/trips/${trip.tripId}/review`, { replace: true });
+    navigate(`/collections?tripId=${trip.tripId}`, { replace: true });
   }
 
   const tripDayLabel = getTripDayLabel(trip.startDate, `${trip.startDate} - ${trip.endDate}`);
