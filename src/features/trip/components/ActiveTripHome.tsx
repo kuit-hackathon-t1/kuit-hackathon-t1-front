@@ -171,14 +171,14 @@ function OpenBookImage({
   onSelectCollection: (collectionId: number) => void;
 }) {
   return (
-    <div className="relative flex h-full w-full max-w-[340px] items-center justify-center px-8">
+    <div className="relative flex h-full w-full max-w-[380px] items-center justify-center px-4">
       <img
         className="h-full w-full object-contain"
         src="/images/home/open-book.png"
         alt="펼쳐진 청춘도감"
       />
       {collections.length > 0 ? (
-        <div className="absolute inset-x-8 inset-y-0">
+        <div className="absolute bottom-[15%] left-[9%] right-[9%] top-[12%] overflow-hidden">
           <SpecimenLayer collections={collections} onSelectCollection={onSelectCollection} limit={6} />
         </div>
       ) : null}

@@ -55,6 +55,7 @@ export default function CollectionListPage() {
   const [selectedCollectionId, setSelectedCollectionId] = useState<number | null>(null);
   const selectedCollectionQuery = useCollectionDetailQuery(userId, selectedCollectionId ?? undefined);
   const stats = useMemo(() => (selectedTrip ? getTripStats(selectedTrip, reviewQuery.data) : null), [reviewQuery.data, selectedTrip]);
+  const attemptedMissionCount = stats ? stats.successMissionCount + stats.failedMissionCount : 0;
 
   if (tripsQuery.isLoading) {
     return <p className="text-sm text-neutral-500">불러오는 중...</p>;
@@ -138,7 +139,7 @@ export default function CollectionListPage() {
         {collectionsQuery.isLoading ? <p className="mt-4 text-sm text-gray-600">채집 기록을 불러오는 중...</p> : null}
 
         <p className="mt-8 text-body-12 leading-5 text-black-700">
-          이번 여행에서 <strong className="font-bold text-primary">{stats.totalMissionCount}개</strong>의 미션을 시도했어요.
+          이번 여행에서 <strong className="font-bold text-primary">{attemptedMissionCount}개</strong>의 미션을 시도했어요.
           <br />
           <strong className="font-bold text-primary">{stats.successMissionCount}개</strong>는 완료했고,{" "}
           <strong className="font-bold text-primary">{stats.failedMissionCount}개</strong>는 놓쳤어요.
