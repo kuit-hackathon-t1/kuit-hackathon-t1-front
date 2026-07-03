@@ -1,6 +1,6 @@
 export default function MissionDrawLoading() {
   return (
-    <div className="flex min-h-[calc(100dvh-120px)] flex-col items-center justify-center bg-[#FFFFF7] px-6 text-center">
+    <div className="flex min-h-0 flex-1 flex-col items-center justify-center bg-[#FFFFF7] px-6 text-center">
       <h2 className="text-lg font-bold text-black-950">미션을 뽑고 있어요</h2>
       <div className="relative mt-10 h-32 w-64">
         <div className="absolute left-3 top-5 h-24 w-56 -rotate-6 rounded-[18px] bg-gray-100 shadow-card" />
