@@ -93,7 +93,7 @@ export default function OnboardingPage() {
                 setNickname(event.target.value);
                 setMessage("");
               }}
-              placeholder="예: 경주, 부산 해운대..."
+              placeholder="예: 여름수집가"
               minLength={1}
               maxLength={15}
               required

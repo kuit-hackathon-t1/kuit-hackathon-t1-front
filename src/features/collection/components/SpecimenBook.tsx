@@ -9,7 +9,7 @@ type SpecimenBookProps = {
 export default function SpecimenBook({ collections, onSelectCollection }: SpecimenBookProps) {
   return (
     <div
-      className="relative mt-10 flex h-64 items-center justify-center overflow-hidden rounded-[28px] border border-dashed border-primary/30 bg-white text-sm font-semibold text-primary shadow-card"
+      className="relative mt-5 flex h-64 items-center justify-center overflow-hidden text-sm font-semibold text-primary"
       style={{
         backgroundImage: "url('/images/home/open-book.png')",
         backgroundSize: "contain",
