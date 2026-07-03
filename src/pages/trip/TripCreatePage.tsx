@@ -4,11 +4,7 @@ import { useNavigate } from "react-router";
 import leftArrowIcon from "@/assets/icons/leftarrow.svg";
 import okayIcon from "@/assets/icons/okay.svg";
 import { useAuthStore } from "@/features/auth/stores/authStore";
-import MissionDrawLoading from "@/features/mission/components/MissionDrawLoading";
-import MissionDrawResult from "@/features/mission/components/MissionDrawResult";
-import { useRandomMissionMutation } from "@/features/mission/queries/useRandomMissionMutation";
-import { useStartMissionMutation } from "@/features/mission/queries/useStartMissionMutation";
-import type { Mission } from "@/features/mission/types/mission";
+import MissionDrawFlow from "@/features/mission/components/MissionDrawFlow";
 import { tripMoodMeta } from "@/features/trip/lib/tripMoodMeta";
 import { useCreateTripMutation } from "@/features/trip/queries/useCreateTripMutation";
 import type { CompanionType, TripCreatePayload, TripMood } from "@/features/trip/types/trip";
@@ -73,11 +69,8 @@ export default function TripCreatePage() {
   const [step, setStep] = useState<WizardStep>(1);
   const [form, setForm] = useState<TripWizardState>(initialState);
   const [createdTripId, setCreatedTripId] = useState<number | null>(null);
-  const [pickedMission, setPickedMission] = useState<Mission | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const createTripMutation = useCreateTripMutation(user?.userId);
-  const randomMissionMutation = useRandomMissionMutation(user?.userId, createdTripId ?? undefined);
-  const startMissionMutation = useStartMissionMutation(user?.userId, createdTripId ?? undefined);
 
   function updateForm(patch: Partial<TripWizardState>) {
     setForm((current) => ({ ...current, ...patch }));
@@ -145,23 +138,9 @@ export default function TripCreatePage() {
     }
   }
 
-  async function handlePickMission() {
+  function handlePickMission() {
     setErrorMessage(null);
-    setPickedMission(null);
     setStep(7);
-    try {
-      const mission = await randomMissionMutation.mutateAsync();
-      setPickedMission(mission);
-    } catch (error) {
-      setStep(6);
-      setErrorMessage(error instanceof Error ? error.message : "미션을 뽑지 못했습니다.");
-    }
-  }
-
-  async function handleStartMission() {
-    if (!pickedMission) return;
-    await startMissionMutation.mutateAsync(pickedMission.missionId);
-    navigate("/home", { replace: true });
   }
 
   if (!user) return null;
@@ -169,9 +148,15 @@ export default function TripCreatePage() {
   return (
     <div
       className={cn(
-        "-mx-5 -my-6 min-h-dvh bg-[#FFFFF7] px-5 py-6",
+        "-mx-5 -my-6 min-h-dvh px-5 py-6",
         step === 7 && "flex h-dvh min-h-0 flex-col overflow-hidden",
       )}
+      style={{
+        background:
+          step === 7
+            ? "linear-gradient(180deg, #FBFCF2 23.73%, #008F0E 297.71%)"
+            : "#FFFFF7",
+      }}
     >
       {step <= 5 ? (
         <form className="flex min-h-[calc(100dvh-48px)] flex-col" onSubmit={handleSubmit}>
@@ -220,21 +205,19 @@ export default function TripCreatePage() {
           form={form}
           errorMessage={errorMessage}
           onPickMission={handlePickMission}
-          disabled={randomMissionMutation.isPending || !createdTripId}
+          disabled={!createdTripId}
         />
       ) : null}
 
       {step === 7 ? (
-        randomMissionMutation.isPending || !pickedMission ? (
-          <MissionDrawLoading />
-        ) : (
-          <MissionDrawResult
-            mission={pickedMission}
-            onRetry={handlePickMission}
-            onStart={handleStartMission}
-            startDisabled={startMissionMutation.isPending}
-          />
-        )
+        <MissionDrawFlow
+          userId={user.userId}
+          tripId={createdTripId ?? undefined}
+          autoStart
+          onClose={() => setStep(6)}
+          onStarted={() => navigate("/home", { replace: true })}
+          closeLabel="여행 생성 완료"
+        />
       ) : null}
     </div>
   );

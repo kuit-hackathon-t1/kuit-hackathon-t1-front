@@ -55,6 +55,7 @@ export default function CollectionListPage() {
   const [selectedCollectionId, setSelectedCollectionId] = useState<number | null>(null);
   const selectedCollectionQuery = useCollectionDetailQuery(userId, selectedCollectionId ?? undefined);
   const stats = useMemo(() => (selectedTrip ? getTripStats(selectedTrip, reviewQuery.data) : null), [reviewQuery.data, selectedTrip]);
+  const attemptedMissionCount = stats ? stats.successMissionCount + stats.failedMissionCount : 0;
 
   if (tripsQuery.isLoading) {
     return <p className="text-sm text-neutral-500">불러오는 중...</p>;
@@ -80,9 +81,9 @@ export default function CollectionListPage() {
 
   return (
    <div className="min-h-[calc(100dvh-64px)] bg-[#FFFFF7] px-5">
-      <header className="-mx-5 relative flex h-22 items-center justify-center border-b border-gray-200 bg-[#FFFFF7] px-5">
-        <h1 className="text-subtitle-20 text-black-800">채집 기록</h1>
-        <button className="absolute right-5 top-1/2 h-8 w-8 -translate-y-1/2 p-2" type="button" aria-label="기록 편집">
+      <header className="-mx-5 relative h-[91px] border-b border-gray-200 bg-[#FFFFF7] px-5">
+        <h1 className="absolute bottom-[15px] left-1/2 -translate-x-1/2 text-subtitle-20 text-black-800">채집 기록</h1>
+        <button className="absolute right-5 bottom-[9px] h-8 w-8 p-2" type="button" aria-label="기록 편집">
           <img className="h-full w-full" src={reviewIcon} alt="" aria-hidden="true" />
         </button>
       </header>
@@ -93,12 +94,16 @@ export default function CollectionListPage() {
             <button
               key={trip.tripId}
               className={cn(
-                "flex w-8 shrink-0 flex-col items-center justify-center rounded-t-[4px] border px-1 py-2 text-[10px] font-semibold text-white shadow-[2px_1px_5px_rgba(0,0,0,0.25)] transition-[height,background-color]",
+                "flex w-8 shrink-0 flex-col items-center justify-center rounded-[5px] border px-1 py-2 text-[10px] font-semibold text-white shadow-[2px_1px_5px_rgba(0,0,0,0.25)] transition-[height,background-color]",
                 effectiveSelectedTripId === trip.tripId
-                  ? "h-[104px] border-[#482317] bg-[#5A2E20]"
-                  : "h-[88px] border-[#603524] bg-[#754532]",
+                  ? "h-[104px] border-[#482317]"
+                  : "h-[88px] border-[#603524]",
                 index % 2 === 0 && effectiveSelectedTripId !== trip.tripId ? "h-[96px]" : "",
               )}
+              style={{
+                background:
+                  "linear-gradient(to bottom, rgba(118, 118, 118, 0.20) 0%, rgba(118, 118, 118, 0.20) 100%), linear-gradient(to bottom, #4D1B0B 0%, #91462E 68.75%, #61230E 100%)",
+              }}
               type="button"
               onClick={() => {
                 setSelectedTripId(trip.tripId);
@@ -134,7 +139,7 @@ export default function CollectionListPage() {
         {collectionsQuery.isLoading ? <p className="mt-4 text-sm text-gray-600">채집 기록을 불러오는 중...</p> : null}
 
         <p className="mt-8 text-body-12 leading-5 text-black-700">
-          이번 여행에서 <strong className="font-bold text-primary">{stats.totalMissionCount}개</strong>의 미션을 시도했어요.
+          이번 여행에서 <strong className="font-bold text-primary">{attemptedMissionCount}개</strong>의 미션을 시도했어요.
           <br />
           <strong className="font-bold text-primary">{stats.successMissionCount}개</strong>는 완료했고,{" "}
           <strong className="font-bold text-primary">{stats.failedMissionCount}개</strong>는 놓쳤어요.

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, Navigate, useLocation, useNavigate, useSearchParams } from "react-router";
 
 import cameraIcon from "@/assets/icons/camera.svg";
+import collectionCompleteIcon from "@/assets/icons/collection-complete.svg";
 import leftarrowIcon from "@/assets/icons/leftarrow.svg";
 import { useAuthStore } from "@/features/auth/stores/authStore";
 import ShapeSelector from "@/features/collection/components/ShapeSelector";
@@ -128,17 +129,14 @@ export default function RecordCreatePage() {
     return (
       <div className="-mx-5 -my-6 flex min-h-dvh flex-col bg-[#FFFFF7] px-5 py-8 text-center">
         <div className="mt-16">
-          <div className="mx-auto text-5xl leading-none" aria-hidden="true">
-            🪐
+          <div className="mx-auto flex h-16 w-16 items-center justify-center" aria-hidden="true">
+            <img className="h-14 w-14 opacity-80" src={collectionCompleteIcon} alt="" />
           </div>
           <h1 className="mt-3 text-3xl font-bold leading-10 text-black-950">채집 완료!</h1>
           <p className="mt-1 text-sm leading-6 text-black-700">청춘 조각이 도감에 담겼어요</p>
         </div>
 
         <div className="relative mt-12 flex h-72 items-center justify-center">
-          <span className="absolute left-0 top-1/2 -translate-y-1/2 text-4xl font-light leading-none text-off" aria-hidden="true">
-            ‹
-          </span>
           <div className="relative h-full w-full max-w-[360px]">
             <div
               className="absolute inset-0 bg-contain bg-center bg-no-repeat"
@@ -154,9 +152,6 @@ export default function RecordCreatePage() {
               />
             </div>
           </div>
-          <span className="absolute right-0 top-1/2 -translate-y-1/2 text-4xl font-light leading-none text-off" aria-hidden="true">
-            ›
-          </span>
         </div>
 
         <div className="mt-auto grid gap-3 pb-3">
@@ -227,8 +222,7 @@ export default function RecordCreatePage() {
       {step === "memo" ? (
         <section className="flex min-h-[calc(100dvh-48px)] flex-col">
           <RecordHeader title="한줄평 남기기" onBack={() => setStep("capture")} />
-          <p className="mt-7 text-sm leading-6 text-black-700">이 순간을 한 줄로 남겨주세요</p>
-          <div className="mt-8 flex min-h-[360px] items-center justify-center rounded-[28px] border border-gray-200 bg-gray-100 p-6">
+          <div className="mt-[41px] flex min-h-[360px] items-center justify-center rounded-[28px] border border-gray-200 bg-gray-100 p-6">
             <SpecimenImage
               imageUrl={previewUrl}
               cropType={flow.cropType ?? "SNAIL"}
@@ -260,7 +254,7 @@ export default function RecordCreatePage() {
 
 function RecordHeader({ title, onBack }: { title: string; onBack: () => void }) {
   return (
-    <header className="relative flex h-14 items-center justify-center">
+    <header className="relative flex h-14 translate-y-[29px] items-center justify-center">
       <button className="absolute left-0 flex h-10 w-10 items-center justify-center" type="button" aria-label="이전" onClick={onBack}>
         <img className="h-5 w-5 opacity-80" src={leftarrowIcon} alt="" aria-hidden="true" />
       </button>

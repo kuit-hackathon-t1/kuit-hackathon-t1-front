@@ -17,9 +17,17 @@ type MissionDrawFlowProps = {
   autoStart?: boolean;
   onClose: () => void;
   onStarted?: (missionId: number) => void;
+  closeLabel?: string;
 };
 
-export default function MissionDrawFlow({ userId, tripId, autoStart = false, onClose, onStarted }: MissionDrawFlowProps) {
+export default function MissionDrawFlow({
+  userId,
+  tripId,
+  autoStart = false,
+  onClose,
+  onStarted,
+  closeLabel = "미션 목록",
+}: MissionDrawFlowProps) {
   const randomMissionMutation = useRandomMissionMutation(userId, tripId);
   const startMissionMutation = useStartMissionMutation(userId, tripId);
   const [phase, setPhase] = useState<DrawPhase>(autoStart ? "loading" : "idle");
@@ -58,7 +66,7 @@ export default function MissionDrawFlow({ userId, tripId, autoStart = false, onC
     <div className="flex h-full min-h-0 flex-col">
       <button className="mb-5 shrink-0 self-start text-sm font-semibold text-primary" type="button" onClick={onClose}>
         <img className="mr-1 inline h-4 w-4 align-[-2px]" src={leftArrowIcon} alt="" aria-hidden="true" />
-        미션 목록
+        {closeLabel}
       </button>
 
       {phase === "loading" ? <MissionDrawLoading /> : null}

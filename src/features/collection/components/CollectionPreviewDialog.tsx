@@ -42,20 +42,20 @@ export default function CollectionPreviewDialog({ collection, isLoading, onClose
         <img className="h-4 w-4" src={closeIcon} alt="" aria-hidden="true" />
       </button>
 
-      <section className="absolute inset-x-0 bottom-10 z-10 px-8">
-        <div className="max-h-[52dvh] overflow-y-auto rounded-[24px] bg-white/80 p-6 shadow-card backdrop-blur-md">
+      <section className="absolute inset-x-0 bottom-8 z-10 px-6">
+        <div className="max-h-[40dvh] overflow-y-auto rounded-[22px] bg-white/80 p-5 shadow-card backdrop-blur-md">
           {isLoading ? (
             <p className="py-8 text-center text-sm font-medium text-gray-600">채집 조각을 불러오는 중...</p>
           ) : hasCollection && collection ? (
             <>
-              <span className={`inline-flex rounded-full px-4 py-2 text-sm font-semibold ${badgeClassName}`}>
+              <span className={`inline-flex rounded-full px-3 py-1.5 text-xs font-semibold ${badgeClassName}`}>
                 {badgeLabel}
               </span>
-              <h2 className="mt-5 text-[32px] font-bold leading-tight text-black-700">{collection.missionTitle}</h2>
+              <h2 className="mt-4 text-2xl font-bold leading-tight text-black-700">{collection.missionTitle}</h2>
               {collection.missionDescription ? (
-                <p className="mt-3 text-sm leading-6 text-gray-600">{collection.missionDescription}</p>
+                <p className="mt-3 line-clamp-2 text-sm leading-5 text-gray-600">{collection.missionDescription}</p>
               ) : null}
-              <p className="mt-8 whitespace-pre-line text-base leading-7 text-black-700">
+              <p className="mt-5 whitespace-pre-line text-sm leading-6 text-black-700">
                 {collection.memo || "한줄 소감이 아직 없어요."}
               </p>
             </>

@@ -1,6 +1,6 @@
 export default function MissionDrawLoading() {
   return (
-    <div className="flex min-h-0 flex-1 flex-col items-center justify-center bg-[#FFFFF7] px-6 text-center">
+    <div className="flex min-h-0 flex-1 flex-col items-center justify-center px-6 text-center">
       <h2 className="text-lg font-bold text-black-950">미션을 뽑고 있어요</h2>
       <img
         className="mt-6 h-auto w-100"

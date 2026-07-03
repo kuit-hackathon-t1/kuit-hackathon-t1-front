@@ -25,14 +25,14 @@ export default function MissionActionDialog({
 }: MissionActionDialogProps) {
   return (
     <div className="fixed inset-0 z-[60] mx-auto flex w-full max-w-[430px] items-center justify-center bg-black/35 px-5 py-6">
-      <section className="relative flex max-h-[calc(100dvh-48px)] w-full max-w-[360px] flex-col overflow-y-auto rounded-[28px] bg-white px-4 pb-4 pt-7 shadow-card">
+      <section className="relative flex max-h-[calc(100dvh-48px)] w-full max-w-[320px] flex-col overflow-y-auto rounded-[24px] bg-white px-4 pb-4 pt-6 shadow-card">
         {selectedStatus === "FAILURE" ? (
-          <IconButton className="left-4 top-7" icon={leftarrowIcon} label="이전" onClick={onBack} />
+          <IconButton className="left-4 top-6" icon={leftarrowIcon} label="이전" onClick={onBack} />
         ) : (
-          <IconButton className="left-4 top-7" icon={closeIcon} label="닫기" onClick={onClose} />
+          <IconButton className="left-4 top-6" icon={closeIcon} label="닫기" onClick={onClose} />
         )}
         {selectedStatus === "FAILURE" ? null : (
-          <h1 className="px-10 text-center text-2xl font-bold leading-8 text-black-950">진행중인 미션</h1>
+          <h1 className="px-10 text-center text-xl font-bold leading-7 text-black-950">진행중인 미션</h1>
         )}
 
         {selectedStatus === null ? (
@@ -60,7 +60,7 @@ function IconButton({
 }) {
   return (
     <button className={`absolute flex h-8 w-8 items-center justify-center ${className}`} type="button" aria-label={label} onClick={onClick}>
-      <img className="h-6 w-6 opacity-70" src={icon} alt="" aria-hidden="true" />
+      <img className="h-5 w-5 opacity-70" src={icon} alt="" aria-hidden="true" />
     </button>
   );
 }
@@ -74,8 +74,8 @@ function MissionSelectView({
 }) {
   return (
     <>
-      <MissionSummaryCard mission={mission} className="mt-8" />
-      <div className="mt-7 grid grid-cols-2 gap-4">
+      <MissionSummaryCard mission={mission} className="mt-6" />
+      <div className="mt-5 grid grid-cols-2 gap-3">
         <DialogButton variant="gray" onClick={() => onSelectStatus("FAILURE")}>
           실패
         </DialogButton>
@@ -89,14 +89,14 @@ function MissionSelectView({
 
 function SuccessConfirmView({ onClose, onRecord }: { onClose: () => void; onRecord: () => void }) {
   return (
-    <div className="pt-8 text-center">
-      <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-[#E3F5F1]">
-        <span className="text-4xl leading-none" aria-hidden="true">
+    <div className="pt-6 text-center">
+      <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-[#E3F5F1]">
+        <span className="text-3xl leading-none" aria-hidden="true">
           ✨
         </span>
       </div>
-      <h2 className="mt-8 text-2xl font-bold leading-8 text-black-950">고생했어요!</h2>
-      <p className="mt-4 whitespace-pre-line text-base font-medium leading-7 text-black-500">
+      <h2 className="mt-6 text-xl font-bold leading-7 text-black-950">고생했어요!</h2>
+      <p className="mt-3 whitespace-pre-line text-sm font-medium leading-6 text-black-500">
         {"미션을 성공적으로 완료했어요.\n성공의 순간을 사진으로 채집해 볼까요?"}
       </p>
       <DialogActionButtons onClose={onClose} onRecord={onRecord} />
@@ -107,10 +107,10 @@ function SuccessConfirmView({ onClose, onRecord }: { onClose: () => void; onReco
 function FailureConfirmView({ mission, onClose, onRecord }: { mission: Mission; onClose: () => void; onRecord: () => void }) {
   return (
     <>
-      <MissionSummaryCard mission={mission} className="mt-10" />
-      <div className="mt-8 text-center">
-        <h2 className="text-2xl font-bold leading-8 text-black-950">미션에 실패하셨나요?</h2>
-        <p className="mt-4 whitespace-pre-line text-base font-medium leading-7 text-black-950">
+      <MissionSummaryCard mission={mission} className="mt-7" />
+      <div className="mt-6 text-center">
+        <h2 className="text-xl font-bold leading-7 text-black-950">미션에 실패하셨나요?</h2>
+        <p className="mt-3 whitespace-pre-line text-sm font-medium leading-6 text-black-950">
           {"미션에 실패해도 추억은 채집할 수 있어요.\n실패한 추억을 채집해볼까요?"}
         </p>
       </div>
@@ -123,19 +123,19 @@ function MissionSummaryCard({ mission, className = "" }: { mission: Mission; cla
   const categoryMeta = getMissionCategoryMeta(mission.category);
 
   return (
-    <article className={`rounded-[24px] bg-white px-5 py-5 shadow-card ${className}`}>
-      <span className={`inline-flex rounded-full px-4 py-1.5 text-sm font-bold leading-none ${categoryMeta.className}`}>
+    <article className={`rounded-[20px] bg-white px-4 py-4 shadow-card ${className}`}>
+      <span className={`inline-flex rounded-full px-3 py-1 text-xs font-bold leading-none ${categoryMeta.className}`}>
         {categoryMeta.label}
       </span>
-      <h2 className="mt-5 text-[30px] font-bold leading-[1.2] text-black-950">{mission.title}</h2>
-      <p className="mt-8 text-base font-medium leading-7 text-black-950">{mission.description}</p>
+      <h2 className="mt-4 text-2xl font-bold leading-[1.2] text-black-950">{mission.title}</h2>
+      <p className="mt-5 text-sm font-medium leading-6 text-black-950">{mission.description}</p>
     </article>
   );
 }
 
 function DialogActionButtons({ onClose, onRecord }: { onClose: () => void; onRecord: () => void }) {
   return (
-    <div className="mt-7 grid grid-cols-[0.85fr_1.65fr] gap-4">
+    <div className="mt-5 grid grid-cols-[0.85fr_1.65fr] gap-3">
       <DialogButton variant="gray" onClick={onClose}>
         나가기
       </DialogButton>
@@ -159,8 +159,8 @@ function DialogButton({
     <Button
       className={
         variant === "green"
-          ? "min-h-14 w-full text-xl font-bold leading-none"
-          : "min-h-14 w-full bg-gray-100 text-xl font-bold leading-none text-black-950 hover:bg-gray-200"
+          ? "min-h-12 w-full text-base font-bold leading-none"
+          : "min-h-12 w-full bg-gray-100 text-base font-bold leading-none text-black-950 hover:bg-gray-200"
       }
       size="lg"
       type="button"
