@@ -8,7 +8,6 @@ type MissionDrawResultProps = {
   mission: Mission;
   onRetry: () => void;
   onStart: () => void;
-  retryDisabled?: boolean;
   startDisabled?: boolean;
 };
 
@@ -16,14 +15,13 @@ export default function MissionDrawResult({
   mission,
   onRetry,
   onStart,
-  retryDisabled = false,
   startDisabled = false,
 }: MissionDrawResultProps) {
   const categoryMeta = getMissionCategoryMeta(mission.category);
 
   return (
-    <div className="flex min-h-[calc(100dvh-120px)] flex-col bg-[#FFFFF7] px-2 py-4">
-      <div className="flex flex-1 flex-col items-center justify-center">
+    <div className="flex min-h-0 flex-1 flex-col bg-[#FFFFF7] px-2 py-4">
+      <div className="flex min-h-0 flex-1 flex-col items-center justify-center">
         <h2 className="text-lg font-bold text-black-950">이번 미션은</h2>
         <Card className="mt-5 w-full max-w-[300px] rounded-[18px] border-gray-200 bg-white p-4 shadow-card">
           <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${categoryMeta.className}`}>
@@ -38,14 +36,13 @@ export default function MissionDrawResult({
             size="xs"
             className="min-h-8 px-4"
             onClick={onRetry}
-            disabled={retryDisabled}
             leftIcon={<img className="h-4 w-4" src={shuffleIcon} alt="" />}
           >
             다시 뽑기
           </Button>
         </div>
       </div>
-      <div className="pb-3">
+      <div className="shrink-0 pb-3">
         <Button type="button" variant="greenOutline" fullWidth size="lg" onClick={onStart} disabled={startDisabled}>
           이 미션 시작하기
         </Button>

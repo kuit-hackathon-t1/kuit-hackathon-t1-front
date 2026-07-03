@@ -227,7 +227,6 @@ export default function TripCreatePage() {
             mission={pickedMission}
             onRetry={handlePickMission}
             onStart={handleStartMission}
-            retryDisabled={randomMissionMutation.isPending}
             startDisabled={startMissionMutation.isPending}
           />
         )
