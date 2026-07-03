@@ -1,4 +1,4 @@
-export type MissionStatus = "DRAWN" | "ACTIVE" | "SUCCESS" | "FAILURE";
+export type MissionStatus = "DRAWN" | "ACTIVE" | "SUCCESS" | "FAILURE" | "CANCELLED";
 export type MissionCategory = "OBSERVATION" | "ACTION" | "LOCAL" | "RANDOM";
 
 export type MissionDto = {
@@ -14,9 +14,13 @@ export type MissionDto = {
   updatedAt?: string;
 };
 
+export type MissionListItemDto = Omit<MissionDto, "tripId"> & {
+  tripId?: number;
+};
+
 export type MissionListResponseDto = {
   tripId: number;
-  missions: MissionDto[];
+  missions: MissionListItemDto[];
 };
 
 export type Mission = {

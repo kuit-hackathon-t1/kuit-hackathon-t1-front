@@ -8,6 +8,7 @@ import MissionActionDialog from "@/features/mission/components/MissionActionDial
 import MissionDrawFlow from "@/features/mission/components/MissionDrawFlow";
 import MissionTabs, { type MissionTab } from "@/features/mission/components/MissionTabs";
 import { getMissionCategoryMeta } from "@/features/mission/lib/missionCategory";
+import { getMissionStatusMeta, isVisibleMissionStatus } from "@/features/mission/lib/missionStatus";
 import { useMissionListQuery } from "@/features/mission/queries/useMissionListQuery";
 import type { Mission, MissionStatus } from "@/features/mission/types/mission";
 import { useCurrentTripQuery } from "@/features/trip/queries/useCurrentTripQuery";
@@ -32,7 +33,7 @@ export default function MissionListPage() {
   const trip = currentTripQuery.data?.hasActiveTrip ? currentTripQuery.data.trip : null;
   const status = toMissionStatus(tab);
   const missionListQuery = useMissionListQuery(userId, trip?.tripId, status);
-  const missions = (missionListQuery.data ?? []).filter((mission) => mission.status !== "DRAWN");
+  const missions = (missionListQuery.data ?? []).filter((mission) => isVisibleMissionStatus(mission.status));
   const isDrawMode = searchParams.get("draw") === "1";
 
   function closeMissionDialog() {
@@ -49,9 +50,9 @@ export default function MissionListPage() {
   }
 
   function moveToRecord(status: "SUCCESS" | "FAILURE") {
-    if (!selectedMission) return;
-    navigate(`/records/new?tripId=${selectedMission.tripId}&missionId=${selectedMission.missionId}&status=${status}`, {
-      state: { tripId: selectedMission.tripId, missionId: selectedMission.missionId, status },
+    if (!selectedMission || !trip) return;
+    navigate(`/records/new?tripId=${trip.tripId}&missionId=${selectedMission.missionId}&status=${status}`, {
+      state: { tripId: trip.tripId, missionId: selectedMission.missionId, status },
     });
   }
 
@@ -168,18 +169,11 @@ function MissionStackCard({
   index: number;
   onOpen: (mission: Mission) => void;
 }) {
-  const interactive = mission.status === "ACTIVE" || mission.status === "SUCCESS" || mission.status === "FAILURE";
+  const interactive = ["ACTIVE", "SUCCESS", "FAILURE"].includes(mission.status);
   const categoryMeta = getMissionCategoryMeta(mission.category);
+  const statusMeta = getMissionStatusMeta(mission.status);
   const rotation = index % 2 === 0 ? "-rotate-[4deg]" : "rotate-[5deg]";
   const offset = index === 0 ? "" : "-mt-2";
-  const statusBadgeColor =
-    mission.status === "SUCCESS"
-      ? "border-primary text-primary"
-      : mission.status === "ACTIVE"
-        ? "border-black-800 text-black-800"
-        : mission.status === "FAILURE"
-          ? "border-off text-off"
-          : "border-gray-400 text-gray-500";
 
   const content = (
     <Card className={`relative rounded-[20px] border-gray-200 bg-white p-4 shadow-card ${rotation}`}>
@@ -187,14 +181,8 @@ function MissionStackCard({
         <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${categoryMeta.className}`}>
           {categoryMeta.label}
         </span>
-        <span
-          className={`rounded-full border bg-white px-4 py-2 text-sm font-semibold ${statusBadgeColor}`}
-        >
-          {mission.status === "ACTIVE"
-            ? "진행 중"
-            : mission.status === "SUCCESS"
-              ? "성공"
-              : "실패"}
+        <span className={`rounded-full border bg-white px-4 py-2 text-sm font-semibold ${statusMeta.className}`}>
+          {statusMeta.label}
         </span>
       </div>
       <h2 className="mt-4 text-2xl font-bold leading-8 text-black-700">{mission.title}</h2>

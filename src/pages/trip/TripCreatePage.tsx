@@ -2,17 +2,10 @@ import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router";
 
 import leftArrowIcon from "@/assets/icons/leftarrow.svg";
-import moodCourageIcon from "@/assets/icons/mood-courage.svg";
-import moodEmotionalIcon from "@/assets/icons/mood-emotional.svg";
-import moodLocalIcon from "@/assets/icons/mood-local.svg";
-import moodWanderingIcon from "@/assets/icons/mood-wandering.svg";
 import okayIcon from "@/assets/icons/okay.svg";
 import { useAuthStore } from "@/features/auth/stores/authStore";
-import MissionDrawLoading from "@/features/mission/components/MissionDrawLoading";
-import MissionDrawResult from "@/features/mission/components/MissionDrawResult";
-import { useRandomMissionMutation } from "@/features/mission/queries/useRandomMissionMutation";
-import { useStartMissionMutation } from "@/features/mission/queries/useStartMissionMutation";
-import type { Mission } from "@/features/mission/types/mission";
+import MissionDrawFlow from "@/features/mission/components/MissionDrawFlow";
+import { tripMoodMeta } from "@/features/trip/lib/tripMoodMeta";
 import { useCreateTripMutation } from "@/features/trip/queries/useCreateTripMutation";
 import type { CompanionType, TripCreatePayload, TripMood } from "@/features/trip/types/trip";
 import { ApiError } from "@/shared/api/ApiError";
@@ -48,10 +41,10 @@ const companionOptions: { value: CompanionType; label: string; description: stri
 ];
 
 const moodOptions: { value: TripMood; label: string; description: string; icon: string }[] = [
-  { value: "EMOTIONAL", label: "감성 남기기", description: "여행의 분위기를 사진과 문장으로 남겨요", icon: moodEmotionalIcon },
-  { value: "WANDERING", label: "헤매기", description: "계획에서 벗어난 순간을 중심으로 채집해요", icon: moodWanderingIcon },
-  { value: "LOCAL", label: "지역 느끼기", description: "계획에서 벗어난 순간을 중심으로 채집해요", icon: moodLocalIcon },
-  { value: "COURAGE", label: "조금 용기내기", description: "평소보다 지나쳤을 순간에 한걸음 다가가요", icon: moodCourageIcon },
+  { value: "EMOTIONAL", ...tripMoodMeta.EMOTIONAL },
+  { value: "WANDERING", ...tripMoodMeta.WANDERING },
+  { value: "LOCAL", ...tripMoodMeta.LOCAL },
+  { value: "COURAGE", ...tripMoodMeta.COURAGE },
 ];
 
 const validationMessages: Record<1 | 2 | 3 | 4 | 5, string> = {
@@ -76,11 +69,8 @@ export default function TripCreatePage() {
   const [step, setStep] = useState<WizardStep>(1);
   const [form, setForm] = useState<TripWizardState>(initialState);
   const [createdTripId, setCreatedTripId] = useState<number | null>(null);
-  const [pickedMission, setPickedMission] = useState<Mission | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const createTripMutation = useCreateTripMutation(user?.userId);
-  const randomMissionMutation = useRandomMissionMutation(user?.userId, createdTripId ?? undefined);
-  const startMissionMutation = useStartMissionMutation(user?.userId, createdTripId ?? undefined);
 
   function updateForm(patch: Partial<TripWizardState>) {
     setForm((current) => ({ ...current, ...patch }));
@@ -148,23 +138,9 @@ export default function TripCreatePage() {
     }
   }
 
-  async function handlePickMission() {
+  function handlePickMission() {
     setErrorMessage(null);
-    setPickedMission(null);
     setStep(7);
-    try {
-      const mission = await randomMissionMutation.mutateAsync();
-      setPickedMission(mission);
-    } catch (error) {
-      setStep(6);
-      setErrorMessage(error instanceof Error ? error.message : "미션을 뽑지 못했습니다.");
-    }
-  }
-
-  async function handleStartMission() {
-    if (!pickedMission) return;
-    await startMissionMutation.mutateAsync(pickedMission.missionId);
-    navigate("/home", { replace: true });
   }
 
   if (!user) return null;
@@ -229,21 +205,19 @@ export default function TripCreatePage() {
           form={form}
           errorMessage={errorMessage}
           onPickMission={handlePickMission}
-          disabled={randomMissionMutation.isPending || !createdTripId}
+          disabled={!createdTripId}
         />
       ) : null}
 
       {step === 7 ? (
-        randomMissionMutation.isPending || !pickedMission ? (
-          <MissionDrawLoading />
-        ) : (
-          <MissionDrawResult
-            mission={pickedMission}
-            onRetry={handlePickMission}
-            onStart={handleStartMission}
-            startDisabled={startMissionMutation.isPending}
-          />
-        )
+        <MissionDrawFlow
+          userId={user.userId}
+          tripId={createdTripId ?? undefined}
+          autoStart
+          onClose={() => setStep(6)}
+          onStarted={() => navigate("/home", { replace: true })}
+          closeLabel="여행 생성 완료"
+        />
       ) : null}
     </div>
   );

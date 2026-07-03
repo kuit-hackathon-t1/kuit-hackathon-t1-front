@@ -12,7 +12,6 @@ import MissionProgressPage from "@/pages/mission/MissionProgressPage";
 import PhotoPiecePage from "@/pages/record/PhotoPiecePage";
 import RecordCreatePage from "@/pages/record/RecordCreatePage";
 import TripCreatePage from "@/pages/trip/TripCreatePage";
-import TripReviewPage from "@/pages/trip/TripReviewPage";
 
 export const router = createBrowserRouter([
   {
@@ -66,14 +65,6 @@ export const router = createBrowserRouter([
             element: (
               <RequireAuth>
                 <CollectionDetailPage />
-              </RequireAuth>
-            ),
-          },
-          {
-            path: "/trips/:tripId/review",
-            element: (
-              <RequireAuth>
-                <TripReviewPage />
               </RequireAuth>
             ),
           },

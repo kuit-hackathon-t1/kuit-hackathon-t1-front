@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Link } from "react-router";
+import { Link, useSearchParams } from "react-router";
 
 import reviewIcon from "@/assets/icons/review.svg";
 import { useAuthStore } from "@/features/auth/stores/authStore";
@@ -35,12 +35,18 @@ export default function CollectionListPage() {
   const userId = user?.userId;
   const tripsQuery = useTripsQuery(userId);
   const trips = useMemo(() => tripsQuery.data?.trips ?? [], [tripsQuery.data?.trips]);
-  const [selectedTripId, setSelectedTripId] = useState<number | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const requestedTripId = Number(searchParams.get("tripId")) || null;
+  const [selectedTripId, setSelectedTripId] = useState<number | null>(requestedTripId);
   const defaultTripId = useMemo(() => {
     if (trips.length === 0) return null;
     return (trips.find((trip) => trip.status === "ACTIVE") ?? trips[0]).tripId;
   }, [trips]);
-  const effectiveSelectedTripId = trips.some((trip) => trip.tripId === selectedTripId) ? selectedTripId : defaultTripId;
+  const effectiveSelectedTripId = trips.some((trip) => trip.tripId === requestedTripId)
+    ? requestedTripId
+    : trips.some((trip) => trip.tripId === selectedTripId)
+      ? selectedTripId
+      : defaultTripId;
   const selectedTrip = trips.find((trip) => trip.tripId === effectiveSelectedTripId) ?? null;
   const reviewTripId = selectedTrip?.status === "ENDED" ? selectedTrip.tripId : undefined;
   const reviewQuery = useTripReviewQuery(userId, reviewTripId);
@@ -49,6 +55,7 @@ export default function CollectionListPage() {
   const [selectedCollectionId, setSelectedCollectionId] = useState<number | null>(null);
   const selectedCollectionQuery = useCollectionDetailQuery(userId, selectedCollectionId ?? undefined);
   const stats = useMemo(() => (selectedTrip ? getTripStats(selectedTrip, reviewQuery.data) : null), [reviewQuery.data, selectedTrip]);
+  const attemptedMissionCount = stats ? stats.successMissionCount + stats.failedMissionCount : 0;
 
   if (tripsQuery.isLoading) {
     return <p className="text-sm text-neutral-500">불러오는 중...</p>;
@@ -98,7 +105,10 @@ export default function CollectionListPage() {
                   "linear-gradient(to bottom, rgba(118, 118, 118, 0.20) 0%, rgba(118, 118, 118, 0.20) 100%), linear-gradient(to bottom, #4D1B0B 0%, #91462E 68.75%, #61230E 100%)",
               }}
               type="button"
-              onClick={() => setSelectedTripId(trip.tripId)}
+              onClick={() => {
+                setSelectedTripId(trip.tripId);
+                setSearchParams({ tripId: String(trip.tripId) });
+              }}
             >
               <span className="line-clamp-4 [writing-mode:vertical-rl]">{trip.tripName}</span>
               <span className="sr-only">
@@ -129,7 +139,7 @@ export default function CollectionListPage() {
         {collectionsQuery.isLoading ? <p className="mt-4 text-sm text-gray-600">채집 기록을 불러오는 중...</p> : null}
 
         <p className="mt-8 text-body-12 leading-5 text-black-700">
-          이번 여행에서 <strong className="font-bold text-primary">{stats.totalMissionCount}개</strong>의 미션을 시도했어요.
+          이번 여행에서 <strong className="font-bold text-primary">{attemptedMissionCount}개</strong>의 미션을 시도했어요.
           <br />
           <strong className="font-bold text-primary">{stats.successMissionCount}개</strong>는 완료했고,{" "}
           <strong className="font-bold text-primary">{stats.failedMissionCount}개</strong>는 놓쳤어요.
