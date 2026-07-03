@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link } from "react-router";
 
 import Button from "@/shared/ui/Button";
@@ -37,22 +36,13 @@ export default function BeforeTripHome({ nickname }: BeforeTripHomeProps) {
 }
 
 function BookImage() {
-  const [hasImage, setHasImage] = useState(true);
-
   return (
     <div className="mt-8 flex h-[210px] w-full max-w-[280px] items-center justify-center">
-      {hasImage ? (
-        <img
-          className="h-full w-full object-contain"
-          src="/images/home/open-book.png"
-          alt="펼쳐진 청춘도감"
-          onError={() => setHasImage(false)}
-        />
-      ) : (
-        <div className="flex h-44 w-full items-center justify-center rounded-[28px] border border-dashed border-primary/30 bg-white text-sm font-semibold text-primary shadow-card">
-          펼쳐진 도감
-        </div>
-      )}
+      <img
+        className="h-full w-full object-contain"
+        src="/images/home/open-book.png"
+        alt="펼쳐진 청춘도감"
+      />
     </div>
   );
 }
