@@ -148,9 +148,15 @@ export default function TripCreatePage() {
   return (
     <div
       className={cn(
-        "-mx-5 -my-6 min-h-dvh bg-[#FFFFF7] px-5 py-6",
+        "-mx-5 -my-6 min-h-dvh px-5 py-6",
         step === 7 && "flex h-dvh min-h-0 flex-col overflow-hidden",
       )}
+      style={{
+        background:
+          step === 7
+            ? "linear-gradient(180deg, #FBFCF2 23.73%, #008F0E 297.71%)"
+            : "#FFFFF7",
+      }}
     >
       {step <= 5 ? (
         <form className="flex min-h-[calc(100dvh-48px)] flex-col" onSubmit={handleSubmit}>

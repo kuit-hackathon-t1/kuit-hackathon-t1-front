@@ -81,9 +81,9 @@ export default function CollectionListPage() {
 
   return (
    <div className="min-h-[calc(100dvh-64px)] bg-[#FFFFF7] px-5">
-      <header className="-mx-5 relative flex h-22 items-center justify-center border-b border-gray-200 bg-[#FFFFF7] px-5">
-        <h1 className="text-subtitle-20 text-black-800">채집 기록</h1>
-        <button className="absolute right-5 top-1/2 h-8 w-8 -translate-y-1/2 p-2" type="button" aria-label="기록 편집">
+      <header className="-mx-5 relative h-[91px] border-b border-gray-200 bg-[#FFFFF7] px-5">
+        <h1 className="absolute bottom-[15px] left-1/2 -translate-x-1/2 text-subtitle-20 text-black-800">채집 기록</h1>
+        <button className="absolute right-5 bottom-[9px] h-8 w-8 p-2" type="button" aria-label="기록 편집">
           <img className="h-full w-full" src={reviewIcon} alt="" aria-hidden="true" />
         </button>
       </header>

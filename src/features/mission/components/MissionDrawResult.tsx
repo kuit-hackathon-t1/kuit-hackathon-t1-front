@@ -20,7 +20,7 @@ export default function MissionDrawResult({
   const categoryMeta = getMissionCategoryMeta(mission.category);
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col bg-[#FFFFF7] px-2 py-4">
+    <div className="flex min-h-0 flex-1 flex-col px-2 py-4">
       <div className="flex min-h-0 flex-1 flex-col items-center justify-center">
         <h2 className="text-lg font-bold text-black-950">이번 미션은</h2>
         <Card className="mt-5 w-full max-w-[300px] rounded-[18px] border-gray-200 bg-white p-4 shadow-card">
