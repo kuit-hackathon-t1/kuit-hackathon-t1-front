@@ -104,13 +104,13 @@ export default function MissionListPage() {
               <EmptyState title="미션이 없습니다" description="랜덤 미션을 뽑아 첫 채집을 시작하세요." />
             )}
           </div>
-          <div className="pointer-events-none fixed inset-x-0 bottom-16 z-40 mx-auto w-full max-w-[430px] px-5 pb-4">
+          <div className="pointer-events-none fixed bottom-16 left-1/2 z-40 w-[calc(100%_-_40px)] max-w-[390px] -translate-x-1/2 pb-4">
             <Button
-              className="pointer-events-auto w-full border-2 border-primary bg-white text-primary hover:bg-primary-soft"
+              className="pointer-events-auto relative w-full border-2 border-primary bg-white text-primary hover:bg-primary-soft"
               size="lg"
               onClick={openDrawMode}
             >
-              <img className="h-5 w-5" src={shuffleIcon} alt="" aria-hidden="true" />
+              <img className="absolute left-5 h-5 w-5" src={shuffleIcon} alt="" aria-hidden="true" />
               랜덤 미션 뽑기
             </Button>
           </div>
