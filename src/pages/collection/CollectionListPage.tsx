@@ -87,12 +87,16 @@ export default function CollectionListPage() {
             <button
               key={trip.tripId}
               className={cn(
-                "flex w-8 shrink-0 flex-col items-center justify-center rounded-t-[4px] border px-1 py-2 text-[10px] font-semibold text-white shadow-[2px_1px_5px_rgba(0,0,0,0.25)] transition-[height,background-color]",
+                "flex w-8 shrink-0 flex-col items-center justify-center rounded-[5px] border px-1 py-2 text-[10px] font-semibold text-white shadow-[2px_1px_5px_rgba(0,0,0,0.25)] transition-[height,background-color]",
                 effectiveSelectedTripId === trip.tripId
-                  ? "h-[104px] border-[#482317] bg-[#5A2E20]"
-                  : "h-[88px] border-[#603524] bg-[#754532]",
+                  ? "h-[104px] border-[#482317]"
+                  : "h-[88px] border-[#603524]",
                 index % 2 === 0 && effectiveSelectedTripId !== trip.tripId ? "h-[96px]" : "",
               )}
+              style={{
+                background:
+                  "linear-gradient(to bottom, rgba(118, 118, 118, 0.20) 0%, rgba(118, 118, 118, 0.20) 100%), linear-gradient(to bottom, #4D1B0B 0%, #91462E 68.75%, #61230E 100%)",
+              }}
               type="button"
               onClick={() => setSelectedTripId(trip.tripId)}
             >
