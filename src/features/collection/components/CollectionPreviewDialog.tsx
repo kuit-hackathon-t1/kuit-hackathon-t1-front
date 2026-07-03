@@ -1,6 +1,9 @@
 import closeIcon from "@/assets/icons/close.svg";
+import { useAuthStore } from "@/features/auth/stores/authStore";
 import { useLocalImageUrl } from "@/features/collection/hooks/useLocalImageUrl";
 import type { CollectionDetail } from "@/features/collection/types/collection";
+import { getMissionCategoryMeta } from "@/features/mission/lib/missionCategory";
+import { useMissionDetailQuery } from "@/features/mission/queries/useMissionDetailQuery";
 
 type CollectionPreviewDialogProps = {
   collection: CollectionDetail | null;
@@ -9,11 +12,16 @@ type CollectionPreviewDialogProps = {
 };
 
 export default function CollectionPreviewDialog({ collection, isLoading, onClose }: CollectionPreviewDialogProps) {
+  const userId = useAuthStore((state) => state.currentUser?.userId);
   const { imageUrl } = useLocalImageUrl(collection?.imageId);
+  const missionQuery = useMissionDetailQuery(userId, collection?.missionId);
   const hasCollection = Boolean(collection);
+  const categoryMeta = missionQuery.data?.category ? getMissionCategoryMeta(missionQuery.data.category) : null;
   const statusLabel = collection?.status === "SUCCESS" ? "성공" : "실패";
   const statusClassName =
     collection?.status === "SUCCESS" ? "bg-pink-100 text-pink-600" : "bg-gray-100 text-gray-600";
+  const badgeLabel = categoryMeta?.label ?? statusLabel;
+  const badgeClassName = categoryMeta?.className ?? statusClassName;
 
   return (
     <div className="fixed inset-0 z-[60] mx-auto w-full max-w-[430px] overflow-hidden bg-black">
@@ -40,8 +48,8 @@ export default function CollectionPreviewDialog({ collection, isLoading, onClose
             <p className="py-8 text-center text-sm font-medium text-gray-600">채집 조각을 불러오는 중...</p>
           ) : hasCollection && collection ? (
             <>
-              <span className={`inline-flex rounded-full px-4 py-2 text-sm font-semibold ${statusClassName}`}>
-                {statusLabel}
+              <span className={`inline-flex rounded-full px-4 py-2 text-sm font-semibold ${badgeClassName}`}>
+                {badgeLabel}
               </span>
               <h2 className="mt-5 text-[32px] font-bold leading-tight text-black-700">{collection.missionTitle}</h2>
               {collection.missionDescription ? (
