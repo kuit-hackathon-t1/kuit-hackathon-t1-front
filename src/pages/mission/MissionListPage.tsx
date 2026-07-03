@@ -49,9 +49,9 @@ export default function MissionListPage() {
   }
 
   function moveToRecord(status: "SUCCESS" | "FAILURE") {
-    if (!selectedMission) return;
-    navigate(`/records/new?tripId=${selectedMission.tripId}&missionId=${selectedMission.missionId}&status=${status}`, {
-      state: { tripId: selectedMission.tripId, missionId: selectedMission.missionId, status },
+    if (!selectedMission || !trip) return;
+    navigate(`/records/new?tripId=${trip.tripId}&missionId=${selectedMission.missionId}&status=${status}`, {
+      state: { tripId: trip.tripId, missionId: selectedMission.missionId, status },
     });
   }
 
