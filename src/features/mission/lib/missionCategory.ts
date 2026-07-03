@@ -11,7 +11,7 @@ type MissionCategoryMeta = {
 const missionCategoryMeta: Record<MissionCategory, MissionCategoryMeta> = {
   RANDOM: {
     label: "즉흥",
-    className: "bg-[#2C2C2C] text-white",
+    className: "bg-[#EB5E88] text-white",
   },
   OBSERVATION: {
     label: "수집",
@@ -23,7 +23,7 @@ const missionCategoryMeta: Record<MissionCategory, MissionCategoryMeta> = {
   },
   LOCAL: {
     label: "지역",
-    className: "bg-primary text-white",
+    className: "bg-[#008F5D] text-white",
   },
 };
 

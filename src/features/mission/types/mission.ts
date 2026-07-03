@@ -1,4 +1,4 @@
-export type MissionStatus = "DRAWN" | "ACTIVE" | "SUCCESS" | "FAILURE";
+export type MissionStatus = "DRAWN" | "ACTIVE" | "SUCCESS" | "FAILURE" | "CANCELLED";
 export type MissionCategory = "OBSERVATION" | "ACTION" | "LOCAL" | "RANDOM";
 
 export type MissionDto = {
