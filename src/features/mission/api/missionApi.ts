@@ -44,7 +44,12 @@ export async function startMission(userId: number, missionId: number): Promise<S
 
 export async function getMissions(userId: number, tripId: number, status?: MissionStatus): Promise<Mission[]> {
   const response = await fetchClient.get<MissionListResponseDto>(endpoints.missions.list(tripId, status), { userId });
-  return response.missions.map(toMission);
+  return response.missions.map((mission) =>
+    toMission({
+      ...mission,
+      tripId: mission.tripId ?? response.tripId,
+    }),
+  );
 }
 
 export async function getMission(userId: number, missionId: number): Promise<Mission> {
