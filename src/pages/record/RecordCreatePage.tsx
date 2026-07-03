@@ -213,8 +213,7 @@ export default function RecordCreatePage() {
       {step === "memo" ? (
         <section className="flex min-h-[calc(100dvh-48px)] flex-col">
           <RecordHeader title="한줄평 남기기" onBack={() => setStep("capture")} />
-          <p className="mt-7 text-sm leading-6 text-black-700">이 순간을 한 줄로 남겨주세요</p>
-          <div className="mt-8 flex min-h-[360px] items-center justify-center rounded-[28px] border border-gray-200 bg-gray-100 p-6">
+          <div className="mt-[41px] flex min-h-[360px] items-center justify-center rounded-[28px] border border-gray-200 bg-gray-100 p-6">
             <SpecimenImage
               imageUrl={previewUrl}
               cropType={flow.cropType ?? "SNAIL"}
@@ -246,7 +245,7 @@ export default function RecordCreatePage() {
 
 function RecordHeader({ title, onBack }: { title: string; onBack: () => void }) {
   return (
-    <header className="relative flex h-14 items-center justify-center">
+    <header className="relative flex h-14 translate-y-[29px] items-center justify-center">
       <button className="absolute left-0 flex h-10 w-10 items-center justify-center" type="button" aria-label="이전" onClick={onBack}>
         <img className="h-5 w-5 opacity-80" src={leftarrowIcon} alt="" aria-hidden="true" />
       </button>

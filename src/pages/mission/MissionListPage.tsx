@@ -77,11 +77,11 @@ export default function MissionListPage() {
    <div
       className={
         isDrawMode
-          ? "h-[calc(100dvh-64px)] overflow-hidden px-5 py-4"
+          ? "h-dvh overflow-hidden px-5 py-4"
           : "min-h-[calc(100dvh-64px)] px-5 py-6"
       }
       style={{
-        background: isDrawMode ? "#FFFFF7" : "linear-gradient(180deg, #FBFCF2 23.73%, #008F0E 297.71%)",
+        background: "linear-gradient(180deg, #FBFCF2 23.73%, #008F0E 297.71%)",
       }}
     >
       {isDrawMode ? (

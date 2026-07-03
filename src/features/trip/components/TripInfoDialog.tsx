@@ -43,8 +43,20 @@ export default function TripInfoDialog({ trip, open, onClose, onRequestEnd }: Tr
           </div>
         </div>
 
+<<<<<<< Updated upstream
         <div className="mt-5 grid grid-cols-3 gap-2 text-center">
           <Stat label="성공" value={trip.missionSummary.successCount} />
+=======
+          <div className="mt-3 w-[66px] shrink-0 text-center">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-[0_2px_12px_rgba(0,0,0,0.12)]">
+              <img className="h-8 w-8" src={moodMeta.icon} alt="" aria-hidden="true" />
+            </div>
+          </div>
+        </section>
+
+        <div className="mt-5 grid grid-cols-3 bg-secondary px-3 py-3 text-center">
+          <Stat label="성공" value={trip.missionSummary.successCount} tone="primary" />
+>>>>>>> Stashed changes
           <Stat label="실패" value={trip.missionSummary.failedCount} />
           <Stat label="기록" value={trip.collectionSummary.totalCount} />
         </div>
