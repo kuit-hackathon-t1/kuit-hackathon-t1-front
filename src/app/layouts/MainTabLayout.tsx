@@ -3,7 +3,6 @@ import { Outlet, NavLink } from "react-router";
 import homeIcon from "@/assets/icons/home.svg";
 import missionIcon from "@/assets/icons/mission.svg";
 import recordIcon from "@/assets/icons/record.svg";
-import { cn } from "@/shared/lib/cn";
 
 const tabs = [
   { to: "/missions", label: "미션", icon: missionIcon },
@@ -24,16 +23,21 @@ export default function MainTabLayout() {
             <NavLink
               key={tab.to}
               to={tab.to}
-              className={({ isActive }) =>
-                cn(
-                  "flex flex-col items-center justify-center gap-1 text-xs font-medium",
-                  isActive ? "text-emerald-700" : "text-neutral-500",
-                )
-              }
+              className="flex flex-col items-center justify-center gap-1 text-xs font-medium text-neutral-500"
             >
               {({ isActive }) => (
                 <>
-                  <img className={cn("h-5 w-5", isActive ? "opacity-100" : "opacity-55")} src={tab.icon} alt="" aria-hidden="true" />
+                  <img
+                    className="h-5 w-5"
+                    src={tab.icon}
+                    alt=""
+                    style={{
+                      filter: isActive
+                        ? "brightness(0) saturate(100%) invert(35%) sepia(96%) saturate(962%) hue-rotate(126deg) brightness(88%) contrast(101%)"
+                        : "brightness(0) saturate(100%) invert(61%) sepia(5%) saturate(138%) hue-rotate(22deg) brightness(93%) contrast(89%)",
+                    }}
+                    aria-hidden="true"
+                  />
                   {tab.label}
                 </>
               )}
