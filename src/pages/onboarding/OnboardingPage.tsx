@@ -195,7 +195,7 @@ function IntroSlide({
         <h1 className="font-jandari text-[40px] font-normal not-italic leading-[120%] whitespace-pre-line text-black-800">
           {slide.title}
         </h1>
-        <p className={`mt-3 max-w-[310px] text-body-12 text-black-700 ${step === 2 ? "mx-auto text-center" : ""}`}>
+        <p className="mt-3 max-w-[310px] text-body-12 text-black-700">
           {slide.description}
         </p>
       </div>
@@ -221,13 +221,13 @@ function IntroSlide({
       ) : step === 2 ? (
         <div className="relative mt-4 min-h-[330px] flex-1">
           <img
-            className="absolute top-[8%] left-[-2%] w-[72%] max-w-[275px]"
+            className="absolute top-[8%] left-[-2%] z-10 w-[72%] max-w-[275px]"
             src="/images/onboarding/mission-card-sample.png"
             alt="목적 없이 10분 걷기 미션 카드"
           />
           <img
-            className="absolute top-[45%] right-[-3%] w-[76%] max-w-[290px] rotate-[28deg]"
-            src="/images/onboarding/mission-card-sample.png"
+            className="absolute top-[40%] right-[-3%] w-[76%] max-w-[290px]"
+            src="/images/onboarding/mission-card-sample2.png"
             alt=""
             aria-hidden="true"
           />
