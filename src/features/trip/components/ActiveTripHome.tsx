@@ -82,13 +82,7 @@ export default function ActiveTripHome({ trip, userId }: ActiveTripHomeProps) {
       </header>
 
       <section className="relative flex h-[230px] shrink-0 items-center justify-center" aria-label="청춘도감">
-        <span className="absolute left-0 top-1/2 -translate-y-1/2 text-4xl font-light leading-none text-off" aria-hidden="true">
-          ‹
-        </span>
         <OpenBookImage collections={collections} onSelectCollection={setSelectedCollectionId} />
-        <span className="absolute right-0 top-1/2 -translate-y-1/2 text-4xl font-light leading-none text-off" aria-hidden="true">
-          ›
-        </span>
       </section>
 
       <section className="flex min-h-0 flex-1 flex-col">
