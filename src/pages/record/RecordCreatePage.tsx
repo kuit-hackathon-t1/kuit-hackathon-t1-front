@@ -30,8 +30,23 @@ type RecordFlowState = {
   memo: string;
 };
 
-function isRecordStatus(value: string | null): value is CollectionStatus {
-  return value === "SUCCESS" || value === "FAILURE";
+function parseRecordStatus(value: unknown): CollectionStatus | null {
+  if (typeof value !== "string") return null;
+
+  return value === "SUCCESS" || value === "FAILURE" ? value : null;
+}
+
+function parsePositiveNumber(value: unknown): number | null {
+  if (typeof value === "number") {
+    return Number.isFinite(value) && Number.isInteger(value) && value > 0 ? value : null;
+  }
+
+  if (typeof value !== "string" || value.trim() === "") {
+    return null;
+  }
+
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && Number.isInteger(parsed) && parsed > 0 ? parsed : null;
 }
 
 export default function RecordCreatePage() {
@@ -41,10 +56,9 @@ export default function RecordCreatePage() {
   const user = useAuthStore((state) => state.currentUser);
   const createCollectionMutation = useCreateCollectionMutation(user?.userId);
   const routeState = (location.state ?? {}) as RecordRouteState;
-  const tripId = routeState.tripId ?? Number(searchParams.get("tripId"));
-  const missionId = routeState.missionId ?? Number(searchParams.get("missionId"));
-  const statusParam = routeState.status ?? searchParams.get("status");
-  const status = isRecordStatus(statusParam) ? statusParam : null;
+  const tripId = parsePositiveNumber(routeState.tripId) ?? parsePositiveNumber(searchParams.get("tripId"));
+  const missionId = parsePositiveNumber(routeState.missionId) ?? parsePositiveNumber(searchParams.get("missionId"));
+  const status = parseRecordStatus(routeState.status) ?? parseRecordStatus(searchParams.get("status"));
   const [step, setStep] = useState<RecordFlowStep>("capture");
   const [flow, setFlow] = useState<RecordFlowState | null>(
     tripId && missionId && status
