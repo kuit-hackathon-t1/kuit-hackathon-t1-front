@@ -167,7 +167,12 @@ export default function TripCreatePage() {
   if (!user) return null;
 
   return (
-    <div className="-mx-5 -my-6 min-h-dvh bg-[#FFFFF7] px-5 py-6">
+    <div
+      className={cn(
+        "-mx-5 -my-6 min-h-dvh bg-[#FFFFF7] px-5 py-6",
+        step === 7 && "flex h-dvh min-h-0 flex-col overflow-hidden",
+      )}
+    >
       {step <= 5 ? (
         <form className="flex min-h-[calc(100dvh-48px)] flex-col" onSubmit={handleSubmit}>
           <WizardHeader step={step} onBack={handleBack} />
