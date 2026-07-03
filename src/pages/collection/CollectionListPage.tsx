@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Link } from "react-router";
+import { Link, useSearchParams } from "react-router";
 
 import reviewIcon from "@/assets/icons/review.svg";
 import { useAuthStore } from "@/features/auth/stores/authStore";
@@ -35,12 +35,18 @@ export default function CollectionListPage() {
   const userId = user?.userId;
   const tripsQuery = useTripsQuery(userId);
   const trips = useMemo(() => tripsQuery.data?.trips ?? [], [tripsQuery.data?.trips]);
-  const [selectedTripId, setSelectedTripId] = useState<number | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const requestedTripId = Number(searchParams.get("tripId")) || null;
+  const [selectedTripId, setSelectedTripId] = useState<number | null>(requestedTripId);
   const defaultTripId = useMemo(() => {
     if (trips.length === 0) return null;
     return (trips.find((trip) => trip.status === "ACTIVE") ?? trips[0]).tripId;
   }, [trips]);
-  const effectiveSelectedTripId = trips.some((trip) => trip.tripId === selectedTripId) ? selectedTripId : defaultTripId;
+  const effectiveSelectedTripId = trips.some((trip) => trip.tripId === requestedTripId)
+    ? requestedTripId
+    : trips.some((trip) => trip.tripId === selectedTripId)
+      ? selectedTripId
+      : defaultTripId;
   const selectedTrip = trips.find((trip) => trip.tripId === effectiveSelectedTripId) ?? null;
   const reviewTripId = selectedTrip?.status === "ENDED" ? selectedTrip.tripId : undefined;
   const reviewQuery = useTripReviewQuery(userId, reviewTripId);
@@ -94,7 +100,10 @@ export default function CollectionListPage() {
                 index % 2 === 0 && effectiveSelectedTripId !== trip.tripId ? "h-[96px]" : "",
               )}
               type="button"
-              onClick={() => setSelectedTripId(trip.tripId)}
+              onClick={() => {
+                setSelectedTripId(trip.tripId);
+                setSearchParams({ tripId: String(trip.tripId) });
+              }}
             >
               <span className="line-clamp-4 [writing-mode:vertical-rl]">{trip.tripName}</span>
               <span className="sr-only">

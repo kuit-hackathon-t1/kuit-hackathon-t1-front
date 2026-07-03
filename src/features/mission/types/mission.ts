@@ -14,9 +14,13 @@ export type MissionDto = {
   updatedAt?: string;
 };
 
+export type MissionListItemDto = Omit<MissionDto, "tripId"> & {
+  tripId?: number;
+};
+
 export type MissionListResponseDto = {
   tripId: number;
-  missions: MissionDto[];
+  missions: MissionListItemDto[];
 };
 
 export type Mission = {
