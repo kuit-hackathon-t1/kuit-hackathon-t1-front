@@ -4,12 +4,9 @@ import MainTabLayout from "@/app/layouts/MainTabLayout";
 import PlainLayout from "@/app/layouts/PlainLayout";
 import RootLayout from "@/app/layouts/RootLayout";
 import { OnboardingRoute, RequireAuth, RootRedirect } from "@/app/routerGuards";
-import CollectionDetailPage from "@/pages/collection/CollectionDetailPage";
 import CollectionListPage from "@/pages/collection/CollectionListPage";
 import HomePage from "@/pages/home/HomePage";
 import MissionListPage from "@/pages/mission/MissionListPage";
-import MissionProgressPage from "@/pages/mission/MissionProgressPage";
-import PhotoPiecePage from "@/pages/record/PhotoPiecePage";
 import RecordCreatePage from "@/pages/record/RecordCreatePage";
 import TripCreatePage from "@/pages/trip/TripCreatePage";
 
@@ -37,34 +34,10 @@ export const router = createBrowserRouter([
             ),
           },
           {
-            path: "/missions/:missionId/progress",
-            element: (
-              <RequireAuth>
-                <MissionProgressPage />
-              </RequireAuth>
-            ),
-          },
-          {
             path: "/records/new",
             element: (
               <RequireAuth>
                 <RecordCreatePage />
-              </RequireAuth>
-            ),
-          },
-          {
-            path: "/photo-piece",
-            element: (
-              <RequireAuth>
-                <PhotoPiecePage />
-              </RequireAuth>
-            ),
-          },
-          {
-            path: "/collections/:collectionId",
-            element: (
-              <RequireAuth>
-                <CollectionDetailPage />
               </RequireAuth>
             ),
           },

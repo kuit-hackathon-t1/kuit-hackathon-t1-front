@@ -174,9 +174,12 @@ function MissionStackCard({
   const statusMeta = getMissionStatusMeta(mission.status);
   const rotation = index % 2 === 0 ? "-rotate-[4deg]" : "rotate-[5deg]";
   const offset = index === 0 ? "" : "-mt-2";
+  const motionClass = interactive
+    ? "cursor-pointer transition-[transform,box-shadow] duration-200 ease-out will-change-transform group-hover:-translate-y-2 group-hover:rotate-0 group-hover:scale-[1.015] group-hover:shadow-[0_16px_30px_rgba(0,0,0,0.14)] group-focus-visible:-translate-y-2 group-focus-visible:rotate-0 group-focus-visible:scale-[1.015] group-focus-visible:shadow-[0_16px_30px_rgba(0,0,0,0.14)] group-active:-translate-y-1 group-active:scale-[1.005] motion-reduce:transition-none motion-reduce:group-hover:translate-y-0 motion-reduce:group-hover:scale-100 motion-reduce:group-focus-visible:translate-y-0 motion-reduce:group-focus-visible:scale-100"
+    : "";
 
   const content = (
-    <Card className={`relative rounded-[20px] border-gray-200 bg-white p-4 shadow-card ${rotation}`}>
+    <Card className={`relative rounded-[20px] border-gray-200 bg-white p-4 shadow-card ${rotation} ${motionClass}`}>
       <div className="flex items-start justify-between gap-3">
         <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${categoryMeta.className}`}>
           {categoryMeta.label}
@@ -193,7 +196,11 @@ function MissionStackCard({
   return (
     <div className={`mx-auto w-[84%] max-w-[320px] ${offset}`}>
       {interactive ? (
-        <button className="block w-full text-left" type="button" onClick={() => onOpen(mission)}>
+        <button
+          className="group block w-full rounded-[20px] text-left outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#FBFCF2]"
+          type="button"
+          onClick={() => onOpen(mission)}
+        >
           {content}
         </button>
       ) : (
