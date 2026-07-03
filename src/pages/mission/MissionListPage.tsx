@@ -15,6 +15,7 @@ import { useCurrentTripQuery } from "@/features/trip/queries/useCurrentTripQuery
 import Button from "@/shared/ui/Button";
 import Card from "@/shared/ui/Card";
 import EmptyState from "@/shared/ui/EmptyState";
+import { cn } from "@/shared/lib/cn";
 import PageHeader from "@/shared/ui/PageHeader";
 
 function toMissionStatus(tab: MissionTab): MissionStatus | undefined {
@@ -176,7 +177,14 @@ function MissionStackCard({
   const offset = index === 0 ? "" : "-mt-2";
 
   const content = (
-    <Card className={`relative rounded-[20px] border-gray-200 bg-white p-4 shadow-card ${rotation}`}>
+    <Card
+      className={cn(
+        "relative rounded-[20px] border-gray-200 bg-white p-4 shadow-card transition-all duration-200 ease-out",
+        rotation,
+        interactive &&
+          "group-hover:-translate-y-1 group-hover:shadow-lg group-focus-visible:-translate-y-1 group-focus-visible:shadow-lg",
+      )}
+    >
       <div className="flex items-start justify-between gap-3">
         <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${categoryMeta.className}`}>
           {categoryMeta.label}
@@ -193,7 +201,11 @@ function MissionStackCard({
   return (
     <div className={`mx-auto w-[84%] max-w-[320px] ${offset}`}>
       {interactive ? (
-        <button className="block w-full text-left" type="button" onClick={() => onOpen(mission)}>
+        <button
+          className="group block w-full cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-4"
+          type="button"
+          onClick={() => onOpen(mission)}
+        >
           {content}
         </button>
       ) : (
