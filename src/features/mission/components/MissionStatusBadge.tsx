@@ -6,6 +6,7 @@ const labels: Record<MissionStatus, string> = {
   ACTIVE: "진행 중",
   SUCCESS: "완료",
   FAILURE: "실패",
+  CANCELLED: "취소됨",
 };
 
 export default function MissionStatusBadge({ status }: { status: MissionStatus }) {
@@ -17,6 +18,7 @@ export default function MissionStatusBadge({ status }: { status: MissionStatus }
         status === "FAILURE" && "bg-neutral-200 text-neutral-600",
         status === "ACTIVE" && "bg-amber-100 text-amber-800",
         status === "DRAWN" && "bg-sky-100 text-sky-800",
+        status === "CANCELLED" && "bg-neutral-100 text-neutral-500",
       )}
     >
       {labels[status]}
