@@ -1,9 +1,14 @@
 import type { MissionStatus } from "@/features/mission/types/mission";
 
-export const HIDDEN_MISSION_STATUSES = ["DRAWN", "CANCELLED"] satisfies MissionStatus[];
+type MissionStatusMeta = {
+  label: string;
+  className: string;
+};
 
-export function isVisibleMissionStatus(status: MissionStatus) {
-  return !(HIDDEN_MISSION_STATUSES as readonly MissionStatus[]).includes(status);
+export const HIDDEN_MISSION_STATUSES = ["RECOMMENDED", "CANCELLED"] satisfies MissionStatus[];
+
+export function isVisibleMissionStatus(status: MissionStatus | string) {
+  return !(HIDDEN_MISSION_STATUSES as readonly string[]).includes(status);
 }
 
 export const missionStatusMeta = {
@@ -19,7 +24,7 @@ export const missionStatusMeta = {
     label: "실패",
     className: "border-off text-off",
   },
-  DRAWN: {
+  RECOMMENDED: {
     label: "대기",
     className: "border-gray-400 text-gray-500",
   },
@@ -27,8 +32,13 @@ export const missionStatusMeta = {
     label: "취소됨",
     className: "border-gray-400 text-gray-500",
   },
-} satisfies Record<MissionStatus, { label: string; className: string }>;
+} satisfies Record<MissionStatus, MissionStatusMeta>;
 
-export function getMissionStatusMeta(status: MissionStatus) {
-  return missionStatusMeta[status];
+const fallbackMissionStatusMeta: MissionStatusMeta = {
+  label: "알 수 없음",
+  className: "border-gray-400 text-gray-500",
+};
+
+export function getMissionStatusMeta(status: MissionStatus | string) {
+  return missionStatusMeta[status as MissionStatus] ?? fallbackMissionStatusMeta;
 }

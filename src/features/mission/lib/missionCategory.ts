@@ -27,6 +27,11 @@ const missionCategoryMeta: Record<MissionCategory, MissionCategoryMeta> = {
   },
 };
 
-export function getMissionCategoryMeta(category: MissionCategory) {
-  return missionCategoryMeta[category];
+const fallbackMissionCategoryMeta: MissionCategoryMeta = {
+  label: "기타",
+  className: "bg-gray-100 text-gray-600",
+};
+
+export function getMissionCategoryMeta(category: MissionCategory | string) {
+  return missionCategoryMeta[category as MissionCategory] ?? fallbackMissionCategoryMeta;
 }
