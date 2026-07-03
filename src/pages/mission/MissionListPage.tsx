@@ -49,9 +49,9 @@ export default function MissionListPage() {
   }
 
   function moveToRecord(status: "SUCCESS" | "FAILURE") {
-    if (!selectedMission) return;
-    navigate(`/records/new?tripId=${selectedMission.tripId}&missionId=${selectedMission.missionId}&status=${status}`, {
-      state: { tripId: selectedMission.tripId, missionId: selectedMission.missionId, status },
+    if (!selectedMission || !trip) return;
+    navigate(`/records/new?tripId=${trip.tripId}&missionId=${selectedMission.missionId}&status=${status}`, {
+      state: { tripId: trip.tripId, missionId: selectedMission.missionId, status },
     });
   }
 
@@ -74,7 +74,10 @@ export default function MissionListPage() {
   }
 
   return (
-   <div className="min-h-[calc(100dvh-64px)] bg-[#FFFFF7] px-5 py-6">
+   <div
+      className="min-h-[calc(100dvh-64px)] px-5 py-6"
+      style={{ background: "linear-gradient(180deg, #FBFCF2 23.73%, #008F0E 297.71%)" }}
+    >
       {isDrawMode ? (
         <MissionDrawFlow
           userId={userId}
@@ -101,13 +104,13 @@ export default function MissionListPage() {
               <EmptyState title="미션이 없습니다" description="랜덤 미션을 뽑아 첫 채집을 시작하세요." />
             )}
           </div>
-          <div className="pointer-events-none fixed inset-x-0 bottom-16 z-40 mx-auto w-full max-w-[430px] px-5 pb-4">
+          <div className="pointer-events-none fixed bottom-16 left-1/2 z-40 w-[calc(100%_-_40px)] max-w-[390px] -translate-x-1/2 pb-4">
             <Button
-              className="pointer-events-auto w-full border-2 border-primary bg-white text-primary hover:bg-primary-soft"
+              className="pointer-events-auto relative w-full border-2 border-primary bg-white text-primary hover:bg-primary-soft"
               size="lg"
               onClick={openDrawMode}
             >
-              <img className="h-5 w-5" src={shuffleIcon} alt="" aria-hidden="true" />
+              <img className="absolute left-5 h-5 w-5" src={shuffleIcon} alt="" aria-hidden="true" />
               랜덤 미션 뽑기
             </Button>
           </div>
@@ -163,6 +166,14 @@ function MissionStackCard({
   const categoryMeta = getMissionCategoryMeta(mission.category);
   const rotation = index % 2 === 0 ? "-rotate-[4deg]" : "rotate-[5deg]";
   const offset = index === 0 ? "" : "-mt-2";
+  const statusBadgeColor =
+    mission.status === "SUCCESS"
+      ? "border-primary text-primary"
+      : mission.status === "ACTIVE"
+        ? "border-black-800 text-black-800"
+        : mission.status === "FAILURE"
+          ? "border-off text-off"
+          : "border-gray-400 text-gray-500";
 
   const content = (
     <Card className={`relative rounded-[20px] border-gray-200 bg-white p-4 shadow-card ${rotation}`}>
@@ -170,7 +181,9 @@ function MissionStackCard({
         <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${categoryMeta.className}`}>
           {categoryMeta.label}
         </span>
-        <span className="rounded-full border border-gray-400 bg-white px-4 py-2 text-sm font-semibold text-gray-500">
+        <span
+          className={`rounded-full border bg-white px-4 py-2 text-sm font-semibold ${statusBadgeColor}`}
+        >
           {mission.status === "ACTIVE"
             ? "진행 중"
             : mission.status === "SUCCESS"

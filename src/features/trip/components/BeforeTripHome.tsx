@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link } from "react-router";
 
 import Button from "@/shared/ui/Button";
@@ -9,7 +8,10 @@ type BeforeTripHomeProps = {
 
 export default function BeforeTripHome({ nickname }: BeforeTripHomeProps) {
   return (
-   <div className="flex min-h-[calc(100dvh-64px)] flex-col bg-[linear-gradient(...)] px-5 pb-6 pt-8">
+   <div
+      className="flex min-h-[calc(100dvh-64px)] flex-col px-5 pb-6 pt-8"
+      style={{ background: "linear-gradient(180deg, #FBFCF2 23.73%, #008F0E 297.71%)" }}
+    >
       <header className="pt-8">
         <p className="text-xs font-medium leading-5 text-black-950">
           <span className="font-bold">{nickname}님</span>의 청춘도감
@@ -34,22 +36,13 @@ export default function BeforeTripHome({ nickname }: BeforeTripHomeProps) {
 }
 
 function BookImage() {
-  const [hasImage, setHasImage] = useState(true);
-
   return (
     <div className="mt-8 flex h-[210px] w-full max-w-[280px] items-center justify-center">
-      {hasImage ? (
-        <img
-          className="h-full w-full object-contain"
-          src="/images/home/open-book.png"
-          alt="펼쳐진 청춘도감"
-          onError={() => setHasImage(false)}
-        />
-      ) : (
-        <div className="flex h-44 w-full items-center justify-center rounded-[28px] border border-dashed border-primary/30 bg-white text-sm font-semibold text-primary shadow-card">
-          펼쳐진 도감
-        </div>
-      )}
+      <img
+        className="h-full w-full object-contain"
+        src="/images/home/open-book.png"
+        alt="펼쳐진 청춘도감"
+      />
     </div>
   );
 }
