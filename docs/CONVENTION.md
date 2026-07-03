@@ -1,4 +1,4 @@
-# GitHub Convention
+# Project Convention
 
 ## Branch Rule
 
@@ -18,23 +18,25 @@ fix/*
 - 버그 수정 브랜치
 
 chore/*
-- 설정, 문서, CI 작업 브랜치
+- 설정, 문서, CI, 정리 작업 브랜치
 ```
 
 ## Branch Name
 
 ```text
-feature/travel-style
-feature/mission-recommend
-feature/mission-board
-feature/island-page
+feature/onboarding-login
+feature/trip-create-flow
+feature/mission-draw-flow
+feature/record-create-flow
+feature/collection-book
 
-fix/mission-card-layout
-fix/api-error-fallback
+fix/mission-list-layout
+fix/record-preview-image
+fix/collection-dialog-state
 
-chore/github-setup
+chore/dead-code-cleanup
+chore/docs-update
 chore/frontend-ci
-chore/project-structure
 ```
 
 ## Commit Message
@@ -58,11 +60,18 @@ remove   : 파일 또는 코드 삭제
 ### Example
 
 ```text
-feat: implement travel style page
-feat: add mission board
-fix: handle empty mission list
-refactor: separate mission card component
-style: update landing page layout
-docs: add github convention
-chore: add frontend ci workflow
+feat: add mission draw flow
+feat: implement collection book preview
+fix: preserve record preview after save
+style: update mission card hover motion
+docs: update project README
+chore: remove legacy route pages
+```
+
+
+## Verification
+
+```bash
+npm run build
+npm run lint
 ```
